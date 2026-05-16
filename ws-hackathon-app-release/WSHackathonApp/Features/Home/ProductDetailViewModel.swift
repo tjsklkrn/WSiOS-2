@@ -73,6 +73,12 @@ class ProductDetailViewModel: ObservableObject {
         return Double(reviews.map(\.rating).reduce(0, +)) / Double(reviews.count)
     }
 
+    let frequentlyBought: [ProductItem] = [
+        ProductItem(id: "FB-1", title: "Crockery Cleaner & Conditioner", price: 27.00, path: nil),
+        ProductItem(id: "FB-2", title: "Stainless Steel Sponge Set", price: 15.00, path: nil),
+        ProductItem(id: "FB-3", title: "Silicone Spatula", price: 12.50, path: nil)
+    ]
+
     private var wishlistRepository: WishlistRepository?
     private var cartRepository: CartRepository?
     private var registryRepository: RegistryRepository?

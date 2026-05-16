@@ -151,7 +151,7 @@ private extension RegistryView {
 
     // MARK: - Registry Favourites by Category
 
-    private let registryCategories: [(icon: String, title: String, subtitle: String)] = [
+    private static let registryCategories: [(icon: String, title: String, subtitle: String)] = [
         ("frying.pan",      "Cookware",    "Pots, pans & sets"),
         ("fork.knife",      "Dinnerware",  "Plates, bowls & mugs"),
         ("wineglass",       "Bar & Wine",  "Glasses & decanters"),
@@ -169,7 +169,7 @@ private extension RegistryView {
 
             let columns = [GridItem(.flexible()), GridItem(.flexible())]
             LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(registryCategories, id: \.title) { category in
+                ForEach(RegistryView.registryCategories, id: \.title) { category in
                     Button {
                         // Navigate to category (future feature)
                     } label: {

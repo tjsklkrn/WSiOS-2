@@ -17,8 +17,9 @@ struct ProductDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showReviews  = false
     @State private var showShareSheet = false
-    @State private var addedToCartFeedback = false
+    @State private var showAddedToCartOptions = false
     @State private var showSizePicker = false
+    @State private var selectedFBProduct: ProductItem? = nil
 
     init(product: ProductItem) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(product: product))
@@ -219,27 +220,16 @@ struct ProductDetailView: View {
                         // MARK: - Add to Cart Button
                         Button(action: {
                             viewModel.addToCart()
-                            addedToCartFeedback = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                addedToCartFeedback = false
-                            }
+                            showAddedToCartOptions = true
                         }) {
-                            HStack {
-                                if addedToCartFeedback {
-                                    Image(systemName: "checkmark")
-                                    Text("Added to Cart!")
-                                } else {
-                                    Text(AppStrings.Home.addToCartButton)
-                                }
-                            }
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding(14)
-                            .background(addedToCartFeedback ? Color.green : Color.black)
-                            .foregroundColor(.white)
-                            .cornerRadius(4)
-                            .animation(.easeInOut(duration: 0.2), value: addedToCartFeedback)
+                            Text(AppStrings.Home.addToCartButton)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding(14)
+                                .background(Color.black)
+                                .foregroundColor(.white)
+                                .cornerRadius(4)
                         }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 8)
@@ -301,6 +291,24 @@ struct ProductDetailView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: [viewModel.product.title])
+            }
+            .confirmationDialog("Added to Cart", isPresented: $showAddedToCartOptions, titleVisibility: .visible) {
+                Button("Continue Shopping") {
+                    showAddedToCartOptions = false
+                }
+                Button("Go to Cart") {
+                    dismiss()
+                    tabBarVM.selectTab(.cart)
+                }
+            } message: {
+                Text("\(viewModel.product.title) has been added to your cart.")
+            }
+            .sheet(item: $selectedFBProduct) { product in
+                ProductDetailView(product: product)
+                    .environmentObject(wishlistRepository)
+                    .environmentObject(cartRepository)
+                    .environmentObject(registryRepository)
+                    .environmentObject(tabBarVM)
             }
         }
         .onAppear {
@@ -400,37 +408,16 @@ struct ProductDetailView: View {
                 .font(.headline)
                 .padding(.horizontal, 16)
 
-            HStack(alignment: .top, spacing: 12) {
-                // Mocked companion product
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.systemGray5))
-                    .frame(width: 80, height: 80)
-                    .overlay(Image(systemName: "sparkles").foregroundColor(.gray))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Crockery Cleaner & Conditioner")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .lineLimit(2)
-                    Text("$27.00")
-                        .font(.subheadline)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 12) {
+                    ForEach(viewModel.frequentlyBought) { product in
+                        HorizontalProductCard(product: product) {
+                            selectedFBProduct = product
+                        }
+                    }
                 }
-
-                Spacer()
-
-                Button {
-                    // Add companion to cart
-                } label: {
-                    Image(systemName: "cart.badge.plus")
-                        .font(.system(size: 20))
-                        .padding(10)
-                        .overlay(
-                            Circle().stroke(Color(.systemGray3), lineWidth: 1)
-                        )
-                        .foregroundColor(.primary)
-                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
         }
     }
 
