@@ -12,56 +12,159 @@ struct ProductCardView: View {
     let product: ProductItem
     let quantity: Int
     let registryQuantity: Int
+    let isWishlisted: Bool
     let onAdd: () -> Void
     let onRemove: () -> Void
     let onAddToRegistry: () -> Void
     let onRemoveFromRegistry: () -> Void
-    
+    let onToggleWishlist: () -> Void
+    let onTap: () -> Void
+
+    // Best-seller badge (mocked; production would come from API)
+    private var isBestSeller: Bool { true }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            GeometryReader { geo in
-                
-                AsyncImage(url: product.imageURL) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: geo.size.width, height: 150)
-                            .clipped()
-                            .cornerRadius(8)
-                    } else if phase.error != nil {
-                        ZStack {
-                            Color(.systemGray5)
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 30))
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+
+                // MARK: - Image + Overlay Badges
+                GeometryReader { geo in
+                    ZStack(alignment: .topLeading) {
+                        AsyncImage(url: product.imageURL) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: geo.size.width, height: 150)
+                                    .clipped()
+                                    .cornerRadius(8)
+                            } else if phase.error != nil {
+                                ZStack {
+                                    Color(.systemGray5)
+                                    Image(systemName: "photo")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 30))
+                                }
+                                .frame(width: geo.size.width, height: 150)
+                                .cornerRadius(8)
+                            } else {
+                                ZStack {
+                                    Color(.systemGray5)
+                                    ProgressView()
+                                }
+                                .frame(width: geo.size.width, height: 150)
+                                .cornerRadius(8)
+                            }
+                        }
+
+                        // "Best Seller" badge (top-left)
+                        if isBestSeller {
+                            Text("Best Seller")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 3)
+                                .background(Color.black)
+                                .cornerRadius(4, corners: [.topLeft, .bottomRight])
+                        }
+
+                        // Wishlist heart (top-right)
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Button(action: onToggleWishlist) {
+                                    Image(systemName: isWishlisted ? "heart.fill" : "heart")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(isWishlisted ? .red : .white)
+                                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                                }
+                                .padding(8)
+                            }
+                            Spacer()
                         }
                         .frame(width: geo.size.width, height: 150)
-                        .cornerRadius(8)
-                    } else {
-                        ZStack {
-                            Color(.systemGray5)
-                            ProgressView()
-                        }
-                        .frame(width: geo.size.width, height: 150)
-                        .cornerRadius(8)
                     }
                 }
-            }
-            .frame(height: 150) // fix GeometryReader height
-            
-            // Product Text
-            Text(product.title)
-                .font(.subheadline)
-            
-            Text(product.price?.formatted(.currency(code: "USD")) ?? "")
-                .font(.subheadline)
-                .foregroundColor(.primary)
-            Spacer()
-            // Add To Cart
-            if quantity == 0 {
-                Button(action: onAdd) {
-                    Text(AppStrings.Home.addToCartButton)
+                .frame(height: 150)
+
+                // MARK: - Product Title
+                Text(product.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(2)
+                    .foregroundColor(.primary)
+
+                // MARK: - Price Row
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    // Mocked "Sugg. Price" strikethrough (in production use retailPrice from DTO)
+                    if let price = product.price, price > 0 {
+                        Text("Sugg. Price \(price.suggestedPrice.formatted(.currency(code: "USD")))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .strikethrough(false)
+                    }
+                }
+
+                HStack(spacing: 4) {
+                    Text("Our Price")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    Text(product.price?.formatted(.currency(code: "USD")) ?? "")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(red: 0.7, green: 0.1, blue: 0.1))
+                }
+
+                Text("Free Shipping")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                // MARK: - Add to Cart
+                if quantity == 0 {
+                    Button(action: onAdd) {
+                        Text(AppStrings.Home.addToCartButton)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(8)
+                            .background(Color.black)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                } else {
+                    HStack {
+                        Text(AppStrings.Cart.title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .frame(width: 40, alignment: .leading)
+
+                        Button(action: onRemove) {
+                            Image(systemName: "minus.circle.fill")
+                        }
+
+                        Spacer()
+
+                        Text("\(quantity)")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
+                        Spacer()
+
+                        Button(action: onAdd) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                    }
+                    .font(.title3)
+                    .foregroundColor(.black)
+                }
+
+                // MARK: - Add to Registry
+                if registryQuantity == 0 {
+                    Button(AppStrings.Home.addToRegistry, action: onAddToRegistry)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
@@ -69,74 +172,66 @@ struct ProductCardView: View {
                         .background(Color.black)
                         .foregroundColor(.white)
                         .cornerRadius(8)
-                }
-            } else {
-                HStack {
-                    Text(AppStrings.Cart.title)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .frame(width: 60, alignment: .leading)
-                    
-                    Button(action: onRemove) {
-                        Image(systemName: "minus.circle.fill")
+                } else {
+                    HStack {
+                        Text(AppStrings.Registry.title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .frame(width: 40, alignment: .leading)
+
+                        Button(action: onRemoveFromRegistry) {
+                            Image(systemName: "minus.circle.fill")
+                        }
+
+                        Spacer()
+
+                        Text("\(registryQuantity)")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+
+                        Spacer()
+
+                        Button(action: onAddToRegistry) {
+                            Image(systemName: "plus.circle.fill")
+                        }
                     }
-                    
-                    Spacer()
-                    
-                    Text("\(quantity)")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    
-                    Spacer()
-                    
-                    Button(action: onAdd) {
-                        Image(systemName: "plus.circle.fill")
-                    }
+                    .font(.title3)
+                    .foregroundColor(.black)
                 }
-                .font(.title3)
-                .foregroundColor(.black)
             }
-            // Add To Registry
-            if registryQuantity == 0 {
-                Button(AppStrings.Home.addToRegistry, action: onAddToRegistry)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding(8)
-                    .background(Color.black)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            } else {
-                HStack {
-                    Text(AppStrings.Registry.title)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .frame(width: 60, alignment: .leading)
-                    
-                    Button(action: onRemoveFromRegistry) {
-                        Image(systemName: "minus.circle.fill")
-                    }
-                    
-                    Spacer()
-                    
-                    Text("\(registryQuantity)")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    
-                    Spacer()
-                    
-                    Button(action: onAddToRegistry) {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                }
-                .font(.title3)
-                .foregroundColor(.black)
-            }
+            .padding(10)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
+            .frame(maxWidth: .infinity)
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
-        .frame(maxWidth: .infinity)
+        .buttonStyle(.plain) // prevents blue highlight on whole card
+    }
+}
+
+// MARK: - Helpers
+
+private extension Double {
+    /// Returns a slightly inflated "suggested" price for display purposes
+    var suggestedPrice: Double { self * 1.3 }
+}
+
+/// Rounded corners on specific corners only
+private extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+private struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }

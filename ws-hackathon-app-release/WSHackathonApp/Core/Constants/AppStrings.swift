@@ -59,4 +59,10 @@ enum AppStrings {
         static let eventDate = "Event Date"
         static let createYourRegistry = "Create Your Registry"
     }
+
+    enum Wishlist {
+        static let title = "Wishlist"
+        static let emptyTitle = "Your wishlist is empty"
+        static let emptyMessage = "Tap the heart on any product to save it here."
+    }
 }
