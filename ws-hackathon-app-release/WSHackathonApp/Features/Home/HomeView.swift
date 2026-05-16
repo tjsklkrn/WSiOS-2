@@ -26,6 +26,7 @@ struct HomeView: View {
     @State private var selectedCategory: String = "All"
     @State private var currentBannerIndex: Int = 0
     @State private var showWishlist: Bool = false
+    @State private var selectedProduct: ProductItem?
 
     private let categories = ["All", "Cookware", "Knives", "Bakeware", "Electrics", "Tabletop"]
 
@@ -79,6 +80,13 @@ struct HomeView: View {
                 WishlistView()
                     .environmentObject(wishlistRepository)
                     .environmentObject(cartRepository)
+            }
+            .sheet(item: $selectedProduct) { product in
+                ProductDetailView(product: product)
+                    .environmentObject(wishlistRepository)
+                    .environmentObject(cartRepository)
+                    .environmentObject(registryRepository)
+                    .environmentObject(tabBarVM)
             }
         }
     }
@@ -224,6 +232,7 @@ struct HomeView: View {
                             quantity: viewModel.quantity(for: product),
                             registryQuantity: viewModel.registryQuantity(for: product),
                             isWishlisted: wishlistRepository.isWishlisted(product),
+                            onTap: { selectedProduct = product },
                             onAdd: { viewModel.addToCart(product) },
                             onRemove: { viewModel.removeFromCart(product) },
                             onAddToRegistry: {

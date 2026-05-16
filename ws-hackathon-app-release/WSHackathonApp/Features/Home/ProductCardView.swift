@@ -11,6 +11,7 @@ struct ProductCardView: View {
     let quantity: Int
     let registryQuantity: Int
     let isWishlisted: Bool
+    let onTap: () -> Void
     let onAdd: () -> Void
     let onRemove: () -> Void
     let onAddToRegistry: () -> Void
@@ -18,40 +19,42 @@ struct ProductCardView: View {
     let onToggleWishlist: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        ZStack(alignment: .topTrailing) {
+            Button(action: onTap) {
+                VStack(alignment: .leading, spacing: 0) {
 
-            // MARK: - Image Area
-            ZStack(alignment: .topTrailing) {
-                productImage
+                    // MARK: - Image Area
+                    productImage
 
-                // Heart / Wishlist button
-                Button(action: onToggleWishlist) {
-                    Image(systemName: isWishlisted ? "heart.fill" : "heart")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(isWishlisted ? .red : Color(.systemGray))
-                        .frame(width: 32, height: 32)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+                    // MARK: - Info Area
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(product.title)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.primary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text(product.price?.formatted(.currency(code: "USD")) ?? "")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
                 }
-                .padding(10)
             }
+            .buttonStyle(.plain)
 
-            // MARK: - Info Area
-            VStack(alignment: .leading, spacing: 4) {
-                Text(product.title)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(product.price?.formatted(.currency(code: "USD")) ?? "")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.primary)
+            Button(action: onToggleWishlist) {
+                Image(systemName: isWishlisted ? "heart.fill" : "heart")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(isWishlisted ? .red : Color(.systemGray))
+                    .frame(width: 32, height: 32)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
             }
-            .padding(.horizontal, 10)
-            .padding(.top, 8)
-            .padding(.bottom, 12)
+            .padding(10)
         }
         .background(Color(.systemBackground))
         .cornerRadius(16)
