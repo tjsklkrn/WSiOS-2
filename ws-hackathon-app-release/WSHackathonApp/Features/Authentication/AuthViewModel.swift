@@ -74,6 +74,27 @@ class AuthViewModel: ObservableObject {
     /// Set to trigger an alert presentation in the active view
     @Published var activeAlert: AuthAlert? = nil
 
+    // MARK: - Init
+    init() {
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if let user = user {
+                    // Check if they are verified or used Google Sign-In
+                    if user.isEmailVerified || user.providerData.contains(where: { $0.providerID == "google.com" }) {
+                        self.isLoggedIn = true
+                    } else {
+                        // If they are not verified, log them out locally
+                        try? Auth.auth().signOut()
+                        self.isLoggedIn = false
+                    }
+                } else {
+                    self.isLoggedIn = false
+                }
+            }
+        }
+    }
+
     // MARK: - Continue (email-first)
     func continueWithEmail() {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)

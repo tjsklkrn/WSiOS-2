@@ -59,4 +59,18 @@ enum AppStrings {
         static let eventDate = "Event Date"
         static let createYourRegistry = "Create Your Registry"
     }
+    
+    enum Checkout {
+        static let addressTitle = "Shipping Address"
+        static let fullName = "Full Name"
+        static let streetAddress = "Street Address"
+        static let city = "City"
+        static let state = "State"
+        static let zipCode = "ZIP Code"
+        static let phoneNumber = "Phone Number"
+        static let proceedToPayment = "Proceed to Payment"
+        static let paymentTitle = "Payment Gateway"
+        static let mockPaymentDescription = "This is a placeholder for the payment gateway."
+        static let finishOrder = "Finish Order"
+    }
 }

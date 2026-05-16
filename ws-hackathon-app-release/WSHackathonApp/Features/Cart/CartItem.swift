@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct CartItem: Identifiable {
+struct CartItem: Identifiable, Codable {
     let id: String
     let title: String
     let price: Double

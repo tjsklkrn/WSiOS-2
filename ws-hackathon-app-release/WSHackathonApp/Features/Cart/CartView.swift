@@ -18,11 +18,8 @@ struct CartView: View {
                 Color(.systemGray6)
                     .ignoresSafeArea()
                 if viewModel.isEmptyCart {
-                    VStack {
-                        EmptyCartView {
-                            tabBarVM.selectTab(.home)
-                        }
-                        Spacer()
+                    EmptyCartView {
+                        tabBarVM.selectTab(.home)
                     }
                 } else {
                     VStack(spacing: 0) {
@@ -30,11 +27,15 @@ struct CartView: View {
                         ScrollView {
                             VStack(spacing: 16) {
                                 ForEach(viewModel.items) { item in
-                                    CartItemRow(
-                                        item: item,
-                                        onAdd: { viewModel.add(item) },
-                                        onRemove: { viewModel.removeItem(item) }
-                                    )
+                                    NavigationLink(destination: Text("Product Details for \(item.title)")) {
+                                        CartItemRow(
+                                            item: item,
+                                            onAdd: { viewModel.add(item) },
+                                            onDecrease: { viewModel.decreaseItem(item) },
+                                            onDelete: { viewModel.removeItem(item) }
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
                             .padding(16)
@@ -54,9 +55,7 @@ struct CartView: View {
                                     .fontWeight(.bold)
                             }
                             
-                            Button(action: {
-                                // TODO: - Implement checkout flow
-                            }) {
+                            NavigationLink(destination: CheckoutAddressView()) {
                                 Text(AppStrings.Cart.checkoutButton)
                                     .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity)

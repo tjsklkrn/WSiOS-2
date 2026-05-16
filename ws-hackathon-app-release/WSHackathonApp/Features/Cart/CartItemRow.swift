@@ -11,7 +11,8 @@ struct CartItemRow: View {
     
     let item: CartItem
     let onAdd: () -> Void
-    let onRemove: () -> Void
+    let onDecrease: () -> Void
+    let onDelete: () -> Void
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -38,9 +39,12 @@ struct CartItemRow: View {
                 
                 // MARK: - Quantity Controls
                 HStack(spacing: 12) {
-                    Button(action: onRemove) {
+                    Button(action: onDecrease) {
                         Image(systemName: "minus.circle.fill")
                     }
+                    .buttonStyle(.borderless)
+                    .disabled(item.quantity <= 1)
+                    .opacity(item.quantity <= 1 ? 0.3 : 1.0)
                     
                     Text("\(item.quantity)")
                         .fontWeight(.medium)
@@ -48,6 +52,7 @@ struct CartItemRow: View {
                     Button(action: onAdd) {
                         Image(systemName: "plus.circle.fill")
                     }
+                    .buttonStyle(.borderless)
                 }
                 .font(.title3)
                 .foregroundColor(.black)
@@ -55,10 +60,23 @@ struct CartItemRow: View {
             
             Spacer()
             
-            // MARK: - Total Price per item
-            Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            // MARK: - Delete & Total Price
+            VStack(alignment: .trailing) {
+                Button(action: onDelete) {
+                    Image(systemName: "trash")
+                        .foregroundColor(Color(.systemRed))
+                        .padding(8)
+                        .background(Color(.systemGray6))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.borderless)
+                
+                Spacer()
+                
+                Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            }
         }
         .padding()
         .background(Color.white)
