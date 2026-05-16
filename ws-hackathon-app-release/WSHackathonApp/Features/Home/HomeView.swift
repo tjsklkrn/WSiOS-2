@@ -17,6 +17,7 @@ struct HomeView: View {
     @EnvironmentObject var wishlistRepository: WishlistRepository
 
     @State private var selectedProduct: ProductItem? = nil
+    @State private var visibleProductCount: Int = 6
 
     var body: some View {
         NavigationStack {
@@ -54,22 +55,10 @@ struct HomeView: View {
                                     GridItem(.flexible(), spacing: spacing)
                                 ]
                                 LazyVGrid(columns: columns, spacing: spacing) {
-                                    ForEach(viewModel.filteredProducts) { product in
+                                    ForEach(viewModel.filteredProducts.prefix(visibleProductCount), id: \.id) { product in
                                         ProductCardView(
                                             product: product,
-                                            quantity: viewModel.quantity(for: product),
-                                            registryQuantity: viewModel.registryQuantity(for: product),
                                             isWishlisted: viewModel.isWishlisted(product),
-                                            onAdd: { viewModel.addToCart(product) },
-                                            onRemove: { viewModel.removeFromCart(product) },
-                                            onAddToRegistry: {
-                                                if viewModel.canAddToRegistry(product) {
-                                                    viewModel.addToRegistry(product)
-                                                } else {
-                                                    tabBarVM.selectTab(.registry)
-                                                }
-                                            },
-                                            onRemoveFromRegistry: { viewModel.removeFromRegistry(product) },
                                             onToggleWishlist: { viewModel.toggleWishlist(product) },
                                             onTap: {
                                                 viewModel.recordView(product)
@@ -80,6 +69,28 @@ struct HomeView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.top, 16)
+
+                                // MARK: - Load More
+                                if viewModel.filteredProducts.count > visibleProductCount {
+                                    Button {
+                                        visibleProductCount += 6
+                                    } label: {
+                                        Text("Load More")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(12)
+                                            .background(Color.white)
+                                            .foregroundColor(.black)
+                                            .cornerRadius(8)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(Color(.systemGray3), lineWidth: 1)
+                                            )
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+                                }
 
                                 // MARK: - "Customers Who Searched… Also Browsed"
                                 if !viewModel.alsoBrowsed.isEmpty {
@@ -102,22 +113,23 @@ struct HomeView: View {
             .navigationTitle(AppStrings.Home.title)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: WishlistView()) {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "heart")
-                                .font(.system(size: 20))
-                                .foregroundColor(.primary)
-                            if !wishlistRepository.items.isEmpty {
-                                Text("\(wishlistRepository.items.count)")
-                                    .font(.system(size: 9, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(3)
-                                    .background(Color.red)
-                                    .clipShape(Circle())
-                                    .offset(x: 8, y: -8)
-                            }
-                        }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // Wishlist — filled when items present, empty otherwise
+                    NavigationLink(destination:
+                        WishlistView()
+                            .environmentObject(wishlistRepository)
+                            .environmentObject(cartRepository)
+                    ) {
+                        Image(systemName: wishlistRepository.items.isEmpty ? "heart" : "heart.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(wishlistRepository.items.isEmpty ? .primary : .red)
+                    }
+
+                    // Profile icon
+                    NavigationLink(destination: Text("Profile").font(.title)) {
+                        Image(systemName: "person.circle")
+                            .font(.system(size: 20))
+                            .foregroundColor(.primary)
                     }
                 }
             }
@@ -135,6 +147,8 @@ struct HomeView: View {
                 ProductDetailView(product: product)
                     .environmentObject(wishlistRepository)
                     .environmentObject(cartRepository)
+                    .environmentObject(registryRepository)
+                    .environmentObject(tabBarVM)
             }
         }
     }

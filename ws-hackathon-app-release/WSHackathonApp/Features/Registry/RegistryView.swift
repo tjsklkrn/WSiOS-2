@@ -87,22 +87,120 @@ struct RegistryView: View {
 private extension RegistryView {
     
     var registryCard: some View {
-        VStack(spacing: 0) {
-            
+        VStack(spacing: 12) {
+
+            // 1. CREATE A REGISTRY  (primary)
             Button {
                 tabBarVM.registryPath.append(.create)
             } label: {
-                createRegistryButton
-                    .contentShape(Rectangle())
+                HStack(spacing: 12) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundColor(.black)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(AppStrings.Registry.create)
+                            .font(.headline)
+                            .foregroundColor(.black)
+                        Text("Start adding gifts for your event")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: AppImages.Registry.chevron)
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.white)
+                .cornerRadius(12)
             }
             .buttonStyle(.plain)
+
+            // 2. FIND A REGISTRY  (secondary)
+            Button {
+                // Navigate to registry search (future feature)
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass.circle")
+                        .font(.system(size: 22))
+                        .foregroundColor(.black)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Find a Registry")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                        Text("Search for a friend or family registry")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: AppImages.Registry.chevron)
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.white)
+                .cornerRadius(12)
+            }
+            .buttonStyle(.plain)
+
+            // 3. REGISTRY FAVOURITES BY CATEGORY
+            registryFavouritesByCategory
         }
-        .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(12)
         .padding(.horizontal, 16)
     }
-    
+
+    // MARK: - Registry Favourites by Category
+
+    private let registryCategories: [(icon: String, title: String, subtitle: String)] = [
+        ("frying.pan",      "Cookware",    "Pots, pans & sets"),
+        ("fork.knife",      "Dinnerware",  "Plates, bowls & mugs"),
+        ("wineglass",       "Bar & Wine",  "Glasses & decanters"),
+        ("refrigerator",    "Small Appliances", "Blenders, espresso & more"),
+        ("tablecells",      "Cutlery",     "Knives & knife sets"),
+        ("cabinet",         "Storage",     "Canisters & organisation")
+    ]
+
+    var registryFavouritesByCategory: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Registry Favourites by Category")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .padding(.horizontal, 4)
+
+            let columns = [GridItem(.flexible()), GridItem(.flexible())]
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(registryCategories, id: \.title) { category in
+                    Button {
+                        // Navigate to category (future feature)
+                    } label: {
+                        VStack(spacing: 8) {
+                            Image(systemName: category.icon)
+                                .font(.system(size: 26))
+                                .foregroundColor(.black)
+                                .frame(height: 32)
+                            Text(category.title)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.primary)
+                                .multilineTextAlignment(.center)
+                            Text(category.subtitle)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 8)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.horizontal, 0)
+    }
+
     var createRegistryButton: some View {
         HStack(spacing: 12) {
             Image(systemName: AppImages.Registry.plus)

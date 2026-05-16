@@ -75,6 +75,7 @@ class ProductDetailViewModel: ObservableObject {
 
     private var wishlistRepository: WishlistRepository?
     private var cartRepository: CartRepository?
+    private var registryRepository: RegistryRepository?
 
     init(product: ProductItem) {
         self.product = product
@@ -82,9 +83,12 @@ class ProductDetailViewModel: ObservableObject {
         selectedSize  = sizes.first
     }
 
-    func bind(wishlistRepository: WishlistRepository, cartRepository: CartRepository) {
+    func bind(wishlistRepository: WishlistRepository,
+              cartRepository: CartRepository,
+              registryRepository: RegistryRepository) {
         self.wishlistRepository = wishlistRepository
         self.cartRepository     = cartRepository
+        self.registryRepository = registryRepository
         isWishlisted = wishlistRepository.isWishlisted(product)
     }
 
@@ -102,4 +106,8 @@ class ProductDetailViewModel: ObservableObject {
 
     func incrementQuantity() { quantity += 1 }
     func decrementQuantity() { if quantity > 1 { quantity -= 1 } }
+
+    func addToRegistry() {
+        registryRepository?.addProduct(product)
+    }
 }
