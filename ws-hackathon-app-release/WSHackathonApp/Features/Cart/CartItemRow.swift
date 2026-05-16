@@ -12,6 +12,7 @@ struct CartItemRow: View {
     let item: CartItem
     let onAdd: () -> Void
     let onRemove: () -> Void
+    let onDelete: () -> Void
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -55,10 +56,20 @@ struct CartItemRow: View {
             
             Spacer()
             
-            // MARK: - Total Price per item
-            Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            // MARK: - Total Price per item & Delete
+            VStack(alignment: .trailing, spacing: 12) {
+                Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Button(action: onDelete) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 18))
+                        .foregroundColor(.red)
+                }
+            }
         }
         .padding()
         .background(Color.white)

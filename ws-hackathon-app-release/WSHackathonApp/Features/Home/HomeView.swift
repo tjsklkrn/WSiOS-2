@@ -126,7 +126,7 @@ struct HomeView: View {
                     }
 
                     // Profile icon
-                    NavigationLink(destination: Text("Profile").font(.title)) {
+                    NavigationLink(destination: ProfileView()) {
                         Image(systemName: "person.circle")
                             .font(.system(size: 20))
                             .foregroundColor(.primary)
