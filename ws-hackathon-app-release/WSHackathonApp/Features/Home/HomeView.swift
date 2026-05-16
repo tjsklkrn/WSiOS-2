@@ -8,36 +8,44 @@
 import SwiftUI
 
 struct HomeView: View {
-
+    
     @StateObject private var viewModel = HomeViewModel()
-
+    
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var registryRepository: RegistryRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
     @EnvironmentObject var wishlistRepository: WishlistRepository
-
+    
     @State private var selectedProduct: ProductItem? = nil
     @State private var visibleProductCount: Int = 6
-
+    @State private var showVisualSearch = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(.systemGray6)
                     .ignoresSafeArea()
-
+                
                 VStack(alignment: .leading, spacing: 0) {
-
+                    
                     // MARK: - Search Bar
                     HStack(spacing: 8) {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.secondary)
                         TextField(AppStrings.Home.searchPlaceHolder, text: $viewModel.searchText)
+                        
+                        Button {
+                            showVisualSearch = true
+                        } label: {
+                            Image(systemName: "camera.viewfinder")
+                                .foregroundColor(.primary)
+                        }
                     }
                     .padding(10)
                     .background(Color.white)
                     .cornerRadius(8)
                     .padding([.horizontal, .top], 16)
-
+                    
                     // MARK: - Content
                     if viewModel.isLoading {
                         Spacer()
@@ -47,217 +55,235 @@ struct HomeView: View {
                     } else {
                         ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 0) {
-
+                                
                                 // MARK: - Main Grid
-                                let spacing: CGFloat = 12
-                                let columns = [
-                                    GridItem(.flexible(), spacing: spacing),
-                                    GridItem(.flexible(), spacing: spacing)
-                                ]
-                                LazyVGrid(columns: columns, spacing: spacing) {
-                                    ForEach(viewModel.filteredProducts.prefix(visibleProductCount), id: \.id) { product in
-                                        ProductCardView(
-                                            product: product,
-                                            isWishlisted: viewModel.isWishlisted(product),
-                                            onToggleWishlist: { viewModel.toggleWishlist(product) },
-                                            onTap: {
-                                                viewModel.recordView(product)
-                                                selectedProduct = product
-                                            }
-                                        )
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.top, 16)
-
-                                // MARK: - Load More
-                                if viewModel.filteredProducts.count > visibleProductCount {
-                                    Button {
-                                        visibleProductCount += 6
-                                    } label: {
-                                        Text("Load More")
+                                if viewModel.filteredProducts.isEmpty && !viewModel.searchText.isEmpty {
+                                    VStack(spacing: 12) {
+                                        Image(systemName: "magnifyingglass")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.gray)
+                                        Text("No exact matches found for \"\(viewModel.searchText)\"")
+                                            .font(.headline)
+                                            .foregroundColor(.primary)
+                                            .multilineTextAlignment(.center)
+                                        Text("Try scanning or searching for another item.")
                                             .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(12)
-                                            .background(Color.white)
-                                            .foregroundColor(.black)
-                                            .cornerRadius(8)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(Color(.systemGray3), lineWidth: 1)
+                                            .foregroundColor(.secondary)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                    .padding(.top, 60)
+                                    .frame(maxWidth: .infinity)
+                                } else {
+                                    let spacing: CGFloat = 12
+                                    let columns = [
+                                        GridItem(.flexible(), spacing: spacing),
+                                        GridItem(.flexible(), spacing: spacing)
+                                    ]
+                                    LazyVGrid(columns: columns, spacing: spacing) {
+                                        ForEach(viewModel.filteredProducts.prefix(visibleProductCount), id: \.id) { product in
+                                            ProductCardView(
+                                                product: product,
+                                                isWishlisted: viewModel.isWishlisted(product),
+                                                onToggleWishlist: { viewModel.toggleWishlist(product) },
+                                                onTap: {
+                                                    viewModel.recordView(product)
+                                                    selectedProduct = product
+                                                }
                                             )
+                                        }
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.top, 16)
-                                }
-
-                                // MARK: - "Customers Who Searched… Also Browsed"
-                                if !viewModel.alsoBrowsed.isEmpty {
-                                    alsoBrowsedSection
-                                        .padding(.top, 24)
-                                }
-
-                                // MARK: - Recently Viewed
-                                if !viewModel.recentlyViewed.isEmpty {
-                                    recentlyViewedSection
-                                        .padding(.top, 24)
-                                }
-
-                                Spacer(minLength: 32)
+                                    
+                                    // MARK: - Load More
+                                    if viewModel.filteredProducts.count > visibleProductCount {
+                                        Button {
+                                            visibleProductCount += 6
+                                        } label: {
+                                            Text("Load More")
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(12)
+                                                .background(Color.white)
+                                                .foregroundColor(.black)
+                                                .cornerRadius(8)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 8)
+                                                        .stroke(Color(.systemGray3), lineWidth: 1)
+                                                )
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.top, 16)
+                                    }
+                                    
+                                    if viewModel.searchText.isEmpty {
+                                        // MARK: - Recently Viewed
+                                        if !viewModel.recentlyViewed.isEmpty {
+                                            recentlyViewedSection
+                                                .padding(.top, 24)
+                                        }
+                                    }
+                                    
+                                    Spacer(minLength: 32)
+                                } // closes else block
+                            } // closes VStack
+                        } // closes ScrollView
+                        }
+                    }
+                }
+                .navigationTitle(AppStrings.Home.title)
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        // Wishlist — filled when items present, empty otherwise
+                        NavigationLink(destination:
+                                        WishlistView()
+                            .environmentObject(wishlistRepository)
+                            .environmentObject(cartRepository)
+                        ) {
+                            Image(systemName: wishlistRepository.items.isEmpty ? "heart" : "heart.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(wishlistRepository.items.isEmpty ? .primary : .red)
+                        }
+                        
+                        // Profile icon
+                        NavigationLink(destination: ProfileView()) {
+                            Image(systemName: "person.circle")
+                                .font(.system(size: 20))
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                .onAppear {
+                    Task {
+                        viewModel.bind(
+                            cartRepository: cartRepository,
+                            registryRepository: registryRepository,
+                            wishlistRepository: wishlistRepository
+                        )
+                        await viewModel.fetchProducts()
+                    }
+                }
+                .sheet(item: $selectedProduct) { product in
+                    ProductDetailView(product: product)
+                        .environmentObject(wishlistRepository)
+                        .environmentObject(cartRepository)
+                        .environmentObject(registryRepository)
+                        .environmentObject(tabBarVM)
+                }
+                .fullScreenCover(isPresented: $showVisualSearch) {
+                    VisualSearchView(viewModel: viewModel)
+                }
+            }
+        }
+        
+        // MARK: - Also Browsed Section
+        
+        private var alsoBrowsedSection: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Customers Who Searched \"\(viewModel.searchText)\"")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 16)
+                    Text("Also Browsed")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 16)
+                }
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 12) {
+                        ForEach(viewModel.alsoBrowsed) { product in
+                            HorizontalProductCard(product: product) {
+                                viewModel.recordView(product)
+                                selectedProduct = product
                             }
                         }
                     }
+                    .padding(.horizontal, 16)
                 }
-            }
-            .navigationTitle(AppStrings.Home.title)
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Wishlist — filled when items present, empty otherwise
-                    NavigationLink(destination:
-                        WishlistView()
-                            .environmentObject(wishlistRepository)
-                            .environmentObject(cartRepository)
-                    ) {
-                        Image(systemName: wishlistRepository.items.isEmpty ? "heart" : "heart.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(wishlistRepository.items.isEmpty ? .primary : .red)
-                    }
-
-                    // Profile icon
-                    NavigationLink(destination: ProfileView()) {
-                        Image(systemName: "person.circle")
-                            .font(.system(size: 20))
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-            .onAppear {
-                Task {
-                    viewModel.bind(
-                        cartRepository: cartRepository,
-                        registryRepository: registryRepository,
-                        wishlistRepository: wishlistRepository
-                    )
-                    await viewModel.fetchProducts()
-                }
-            }
-            .sheet(item: $selectedProduct) { product in
-                ProductDetailView(product: product)
-                    .environmentObject(wishlistRepository)
-                    .environmentObject(cartRepository)
-                    .environmentObject(registryRepository)
-                    .environmentObject(tabBarVM)
             }
         }
-    }
-
-    // MARK: - Also Browsed Section
-
-    private var alsoBrowsedSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Customers Who Searched \"\(viewModel.searchText)\"")
+        
+        // MARK: - Recently Viewed Section
+        
+        private var recentlyViewedSection: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Recently Viewed")
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(.horizontal, 16)
-                Text("Also Browsed")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 12) {
+                        ForEach(viewModel.recentlyViewed) { product in
+                            HorizontalProductCard(product: product) {
+                                viewModel.recordView(product)
+                                selectedProduct = product
+                            }
+                        }
+                    }
                     .padding(.horizontal, 16)
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 12) {
-                    ForEach(viewModel.alsoBrowsed) { product in
-                        HorizontalProductCard(product: product) {
-                            viewModel.recordView(product)
-                            selectedProduct = product
-                        }
-                    }
                 }
-                .padding(.horizontal, 16)
             }
         }
     }
-
-    // MARK: - Recently Viewed Section
-
-    private var recentlyViewedSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Recently Viewed")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .padding(.horizontal, 16)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 12) {
-                    ForEach(viewModel.recentlyViewed) { product in
-                        HorizontalProductCard(product: product) {
-                            viewModel.recordView(product)
-                            selectedProduct = product
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-        }
-    }
-}
-
-// MARK: - Horizontal Product Card (for scrollable sections)
-
-struct HorizontalProductCard: View {
-    let product: ProductItem
-    let onTap: () -> Void
-    private let cardWidth: CGFloat = 152
-    private let imageHeight: CGFloat = 130
-
-    var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 6) {
-                AsyncImage(url: product.imageURL) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: cardWidth, height: imageHeight)
-                            .clipped()
-                            .cornerRadius(8)
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray5))
-                            .frame(width: cardWidth, height: imageHeight)
-                            .overlay(
-                                phase.error != nil
+    
+    // MARK: - Horizontal Product Card (for scrollable sections)
+    
+    struct HorizontalProductCard: View {
+        let product: ProductItem
+        let onTap: () -> Void
+        private let cardWidth: CGFloat = 152
+        private let imageHeight: CGFloat = 130
+        
+        var body: some View {
+            Button(action: onTap) {
+                VStack(alignment: .leading, spacing: 6) {
+                    AsyncImage(url: product.imageURL) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: cardWidth, height: imageHeight)
+                                .clipped()
+                                .cornerRadius(8)
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(.systemGray5))
+                                .frame(width: cardWidth, height: imageHeight)
+                                .overlay(
+                                    phase.error != nil
                                     ? AnyView(Image(systemName: "photo").foregroundColor(.gray).font(.title2))
                                     : AnyView(ProgressView())
-                            )
+                                )
+                        }
                     }
-                }
-
-                Text(product.title)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
-                    .foregroundColor(.primary)
-                    .frame(width: cardWidth, alignment: .leading)
-
-                if let price = product.price {
-                    Text(price.formatted(.currency(code: "USD")))
+                    
+                    Text(product.title)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .fontWeight(.medium)
+                        .lineLimit(2)
+                        .foregroundColor(.primary)
+                        .frame(width: cardWidth, alignment: .leading)
+                    
+                    if let price = product.price {
+                        Text(price.formatted(.currency(code: "USD")))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer(minLength: 0)
                 }
-
-                Spacer(minLength: 0)
+                .frame(width: cardWidth)
+                .padding(10)
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
             }
-            .frame(width: cardWidth)
-            .padding(10)
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
     }
-}
+

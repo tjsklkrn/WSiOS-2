@@ -13,7 +13,6 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         let arView = ARView(frame: .zero)
 
-        // AR World Tracking — horizontal plane detection
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = [.horizontal]
         config.environmentTexturing = .automatic
@@ -22,32 +21,28 @@ struct ARViewContainer: UIViewRepresentable {
         }
         arView.session.run(config)
 
-        // Coaching overlay — guides user to scan a surface
-        let coachingOverlay = ARCoachingOverlayView()
-        coachingOverlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        coachingOverlay.session = arView.session
-        coachingOverlay.goal = .horizontalPlane
-        arView.addSubview(coachingOverlay)
+        // Native coaching overlay — tells user to scan surface
+        let coaching = ARCoachingOverlayView()
+        coaching.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        coaching.session = arView.session
+        coaching.goal = .horizontalPlane
+        arView.addSubview(coaching)
 
-        // Tap gesture to place
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         arView.addGestureRecognizer(tap)
-
         context.coordinator.arView = arView
         return arView
     }
 
     func updateUIView(_ uiView: ARView, context: Context) {
-        // Reset: remove anchor from scene when user taps trash
+        // Remove anchor when user resets
         if !viewModel.isModelPlaced, let anchor = viewModel.currentAnchor {
             uiView.scene.removeAnchor(anchor)
             viewModel.currentAnchor = nil
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(viewModel: viewModel)
-    }
+    func makeCoordinator() -> Coordinator { Coordinator(viewModel: viewModel) }
 
     // MARK: - Coordinator
 
@@ -63,47 +58,40 @@ struct ARViewContainer: UIViewRepresentable {
         @objc func handleTap(_ recognizer: UITapGestureRecognizer) {
             guard let arView = arView,
                   !viewModel.isModelPlaced,
-                  let productImage = viewModel.productImage else { return }
+                  let image = viewModel.productImage else { return }
 
-            let location = recognizer.location(in: arView)
+            let pt = recognizer.location(in: arView)
 
-            // Raycast onto a real horizontal plane for a stable anchor
-            let results = arView.raycast(from: location, allowing: .existingPlaneGeometry, alignment: .horizontal)
-            guard let hit = results.first else {
-                // Fall back to estimated plane if no real plane hit yet
-                let estimated = arView.raycast(from: location, allowing: .estimatedPlane, alignment: .horizontal)
-                if let est = estimated.first {
-                    placeEntity(image: productImage, at: est, in: arView)
-                }
-                return
-            }
+            // Prefer a hit on a real detected plane (most stable)
+            let hits = arView.raycast(from: pt, allowing: .existingPlaneGeometry, alignment: .horizontal)
+            let result = hits.first ?? arView.raycast(from: pt, allowing: .estimatedPlane, alignment: .horizontal).first
+            guard let hit = result else { return }
 
-            placeEntity(image: productImage, at: hit, in: arView)
+            place(image: image, at: hit, in: arView)
         }
 
-        private func placeEntity(image: UIImage, at result: ARRaycastResult, in arView: ARView) {
-            // Use AnchorEntity locked to the detected plane transform
-            // This keeps the object perfectly pinned to the table surface
-            let anchor = AnchorEntity(world: result.worldTransform)
+        private func place(image: UIImage, at hit: ARRaycastResult, in arView: ARView) {
+            // Anchor locked to the real-world transform of the hit plane point
+            let anchor = AnchorEntity(world: hit.worldTransform)
+
+            // Shadow first (underneath the card)
+            let aspectRatio = Float(image.size.width / image.size.height)
+            let cardHeight: Float = 0.30
+            let cardWidth: Float = cardHeight * aspectRatio
+            let shadowRadius = max(cardWidth, cardHeight) * 0.55
+            let shadow = viewModel.buildShadow(radius: shadowRadius)
+            anchor.addChild(shadow)
+
+            // Product card
+            let card = viewModel.buildProductEntity(from: image)
+            // Allow rotate and scale only — no translation so it doesn't drift
+            arView.installGestures([.rotation, .scale], for: card)
+            anchor.addChild(card)
+
             arView.scene.addAnchor(anchor)
-
-            let model = viewModel.create3DProductEntity(from: image)
-            model.name = "product3D"
-
-            // Lift the entity by half its height so it sits ON the surface, not inside it
-            let height: Float = 0.25 * 0.04 // same as in ViewModel
-            model.position.y = height / 2
-
-            // Only allow rotation & scale — no translation to prevent drifting
-            arView.installGestures([.rotation, .scale], for: model)
-
-            anchor.addChild(model)
             viewModel.currentAnchor = anchor
 
-            withAnimation {
-                viewModel.isModelPlaced = true
-            }
-
+            withAnimation { viewModel.isModelPlaced = true }
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }

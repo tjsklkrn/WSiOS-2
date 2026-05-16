@@ -120,8 +120,35 @@ class HomeViewModel: ObservableObject {
     var filteredProducts: [ProductItem] {
         if searchText.isEmpty {
             return products
+        }
+        
+        // 1. Try exact string match first
+        let exactMatches = products.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+        if !exactMatches.isEmpty {
+            return exactMatches
+        }
+        
+        // 2. Smart Fallback for Visual Search Demo
+        // Since the mock DB only has 10 items, Vision API labels like "utensil" or "plate" yield 0 results.
+        // This maps generic camera scan results to the closest items in our limited catalog.
+        let lowerSearch = searchText.lowercased()
+        let relatedKeywords: [String]
+        
+        if lowerSearch.contains("utensil") || lowerSearch.contains("plate") || lowerSearch.contains("dish") || lowerSearch.contains("tableware") || lowerSearch.contains("silverware") {
+            relatedKeywords = ["bowl", "board", "lazy susan", "saucer"]
+        } else if lowerSearch.contains("glass") || lowerSearch.contains("cup") || lowerSearch.contains("mug") || lowerSearch.contains("bottle") || lowerSearch.contains("drink") {
+            relatedKeywords = ["glass", "cup", "saucer"]
+        } else if lowerSearch.contains("pan") || lowerSearch.contains("pot") || lowerSearch.contains("cook") || lowerSearch.contains("oven") || lowerSearch.contains("skillet") || lowerSearch.contains("appliance") || lowerSearch.contains("machine") {
+            relatedKeywords = ["oven", "skillet", "coffee maker"]
+        } else if lowerSearch.contains("food") || lowerSearch.contains("oil") || lowerSearch.contains("liquid") {
+            relatedKeywords = ["oil"]
         } else {
-            return products.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+            return []
+        }
+        
+        return products.filter { product in
+            let lowerTitle = product.title.lowercased()
+            return relatedKeywords.contains(where: { lowerTitle.contains($0) })
         }
     }
 

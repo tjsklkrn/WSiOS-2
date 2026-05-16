@@ -6,6 +6,7 @@
 import SwiftUI
 import RealityKit
 import ARKit
+import Combine
 
 @MainActor
 final class ARViewModel: ObservableObject {
@@ -20,65 +21,59 @@ final class ARViewModel: ObservableObject {
     func downloadProductImage(from url: URL) async {
         isLoading = true
         defer { isLoading = false }
-
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            if let image = UIImage(data: data) {
-                self.productImage = image
+            if let img = UIImage(data: data) {
+                self.productImage = img
             }
         } catch {
-            print("AR: Failed to download product image: \(error)")
+            print("AR: image download failed: \(error)")
         }
     }
 
-    // MARK: - 3D Entity Creation
+    // MARK: - Build AR Entity
 
-    /// Creates a 3D box entity with the product image applied to the top face,
-    /// and a realistic material on the sides — giving a true 3D appearance.
-    func create3DProductEntity(from image: UIImage) -> ModelEntity {
+    /// Creates a vertical standing card with the product photo at real-world scale.
+    /// This is the same technique used by IKEA Place and Amazon AR View.
+    func buildProductEntity(from image: UIImage) -> ModelEntity {
         let aspectRatio = Float(image.size.width / image.size.height)
 
-        // Real-world size: 25 cm wide, proportional depth
-        let width: Float = 0.25
-        let depth: Float = width / aspectRatio
-        let height: Float = width * 0.04  // thickness ~4% of width
+        // Real-world size: 30 cm tall, width proportional
+        let cardHeight: Float = 0.30
+        let cardWidth: Float = cardHeight * aspectRatio
 
-        // Build a box mesh
-        let mesh = MeshResource.generateBox(size: [width, height, depth])
+        // Flat plane — we rotate it to stand vertical after placement
+        let mesh = MeshResource.generatePlane(width: cardWidth, height: cardHeight)
 
-        // --- Top face material: product image ---
-        var topMaterial = UnlitMaterial()
-        if let cgImage = image.cgImage {
-            do {
-                let texture = try TextureResource.generate(from: cgImage, options: .init(semantic: .color))
-                topMaterial.color = .init(tint: .white, texture: .init(texture))
-            } catch {
-                topMaterial.color = .init(tint: .white)
-            }
+        var material = UnlitMaterial()
+        if let cg = image.cgImage,
+           let texture = try? TextureResource.generate(from: cg, options: .init(semantic: .color)) {
+            material.color = .init(tint: .white, texture: .init(texture))
+        } else {
+            material.color = .init(tint: .white)
         }
 
-        // --- Side/bottom material: neutral off-white like product packaging ---
-        var sideMaterial = SimpleMaterial(color: UIColor(white: 0.92, alpha: 1.0), isMetallic: false)
-        sideMaterial.roughness = 0.6
+        let card = ModelEntity(mesh: mesh, materials: [material])
 
-        // RealityKit box has 6 faces in this order:
-        // right, left, top, bottom, front, back
-        let entity = ModelEntity(
-            mesh: mesh,
-            materials: [sideMaterial, sideMaterial, topMaterial, sideMaterial, sideMaterial, sideMaterial]
-        )
+        // Rotate to stand upright (90 degrees around X axis)
+        card.transform.rotation = simd_quatf(angle: -.pi / 2, axis: [1, 0, 0])
 
-        entity.generateCollisionShapes(recursive: true)
-        return entity
+        // Lift it so the bottom edge sits on the table
+        card.position.y = cardHeight / 2
+
+        card.generateCollisionShapes(recursive: true)
+        return card
     }
 
-    // MARK: - Reset
+    // MARK: - Shadow Disc
 
-    func resetPlacement(in scene: RealityKit.Scene) {
-        if let anchor = currentAnchor {
-            scene.removeAnchor(anchor)
-            currentAnchor = nil
-        }
-        isModelPlaced = false
+    /// A dark transparent disc placed flat on the table to simulate a shadow
+    func buildShadow(radius: Float) -> ModelEntity {
+        let mesh = MeshResource.generatePlane(width: radius * 2, depth: radius * 2)
+        var mat = UnlitMaterial()
+        mat.color = .init(tint: UIColor(white: 0, alpha: 0.25))
+        let shadow = ModelEntity(mesh: mesh, materials: [mat])
+        shadow.position.y = 0.001 // just above surface to avoid z-fighting
+        return shadow
     }
 }
