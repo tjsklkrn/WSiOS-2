@@ -115,15 +115,12 @@ struct HomeView: View {
             }
             .navigationTitle(AppStrings.Home.title)
 
-<<<<<<< HEAD
+
             .toolbar {
 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showSignOutConfirm = true }) {
-=======
-                    // Profile icon
-                    NavigationLink(destination: ProfileView()) {
->>>>>>> 4e52e1b (feat: cart delete, profile screen, detail alerts and freq bought)
+
                         Image(systemName: "person.circle")
                             .font(.system(size: 18))
 

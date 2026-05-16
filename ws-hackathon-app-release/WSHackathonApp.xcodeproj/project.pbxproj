@@ -293,8 +293,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WSHackathonApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
 				INFOPLIST_KEY_NSAppTransportSecurity = "{ NSAllowsArbitraryLoads = YES; }";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -340,10 +340,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WSHackathonApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_NSAppTransportSecurity = "{ NSAllowsArbitraryLoads = YES; }";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
