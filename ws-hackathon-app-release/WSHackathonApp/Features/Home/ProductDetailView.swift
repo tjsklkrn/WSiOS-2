@@ -138,6 +138,7 @@ struct ProductDetailView: View {
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
+                                .padding(.horizontal, 16)
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
@@ -218,21 +219,60 @@ struct ProductDetailView: View {
                         Divider().padding(.horizontal, 16).padding(.vertical, 12)
 
                         // MARK: - Add to Cart Button
-                        Button(action: {
-                            viewModel.addToCart()
-                            showAddedToCartOptions = true
-                        }) {
-                            Text(AppStrings.Home.addToCartButton)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
-                                .padding(14)
-                                .background(Color.black)
-                                .foregroundColor(.white)
-                                .cornerRadius(4)
+                        if showAddedToCartOptions {
+                            HStack(spacing: 12) {
+                                Button(action: {
+                                    showAddedToCartOptions = false
+                                }) {
+                                    Text("Continue Shopping")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(14)
+                                        .background(Color.white)
+                                        .foregroundColor(.black)
+                                        .cornerRadius(4)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(Color.black, lineWidth: 1)
+                                        )
+                                }
+                                
+                                Button(action: {
+                                    dismiss()
+                                    tabBarVM.selectTab(.cart)
+                                }) {
+                                    Text("Go to Cart")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(14)
+                                        .background(Color.black)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(4)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 8)
+                        } else {
+                            Button(action: {
+                                viewModel.addToCart()
+                                withAnimation {
+                                    showAddedToCartOptions = true
+                                }
+                            }) {
+                                Text(AppStrings.Home.addToCartButton)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(14)
+                                    .background(Color.black)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(4)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 8)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
 
                         // MARK: - Add to Registry Button
                         Button(action: {
@@ -291,17 +331,6 @@ struct ProductDetailView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: [viewModel.product.title])
-            }
-            .confirmationDialog("Added to Cart", isPresented: $showAddedToCartOptions, titleVisibility: .visible) {
-                Button("Continue Shopping") {
-                    showAddedToCartOptions = false
-                }
-                Button("Go to Cart") {
-                    dismiss()
-                    tabBarVM.selectTab(.cart)
-                }
-            } message: {
-                Text("\(viewModel.product.title) has been added to your cart.")
             }
             .sheet(item: $selectedFBProduct) { product in
                 ProductDetailView(product: product)
@@ -365,8 +394,8 @@ struct ProductDetailView: View {
                 }
             }
 
-            Button {
-                showReviews = true
+            NavigationLink {
+                ReviewsSheet(reviews: viewModel.reviews, average: viewModel.averageRating)
             } label: {
                 Text("READ REVIEWS >")
                     .font(.caption)
@@ -378,9 +407,6 @@ struct ProductDetailView: View {
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
-        }
-        .sheet(isPresented: $showReviews) {
-            ReviewsSheet(reviews: viewModel.reviews, average: viewModel.averageRating)
         }
     }
 
@@ -429,7 +455,7 @@ struct ProductDetailView: View {
                 Text("Customer Reviews")
                     .font(.headline)
                 Spacer()
-                Button("See All") { showReviews = true }
+                NavigationLink("See All", destination: ReviewsSheet(reviews: viewModel.reviews, average: viewModel.averageRating))
                     .font(.subheadline)
                     .foregroundColor(.primary)
             }
@@ -496,22 +522,15 @@ private struct ReviewsSheet: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationStack {
-            List(reviews) { review in
-                ReviewRow(review: review)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-            }
-            .listStyle(.plain)
-            .navigationTitle("Reviews (\(reviews.count))")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
+        List(reviews) { review in
+            ReviewRow(review: review)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
         }
+        .listStyle(.plain)
+        .navigationTitle("Reviews (\(reviews.count))")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
