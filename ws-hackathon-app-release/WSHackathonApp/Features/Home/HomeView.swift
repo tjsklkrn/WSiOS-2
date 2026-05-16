@@ -15,10 +15,12 @@ struct HomeView: View {
     @EnvironmentObject var registryRepository: RegistryRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
 
+
     @EnvironmentObject var authVM: AuthViewModel
 
     @State private var showSignOutConfirm = false
     
+
 
     var body: some View {
         NavigationStack {
@@ -56,22 +58,10 @@ struct HomeView: View {
                                     GridItem(.flexible(), spacing: spacing)
                                 ]
                                 LazyVGrid(columns: columns, spacing: spacing) {
-                                    ForEach(viewModel.filteredProducts) { product in
+                                    ForEach(viewModel.filteredProducts.prefix(visibleProductCount), id: \.id) { product in
                                         ProductCardView(
                                             product: product,
-                                            quantity: viewModel.quantity(for: product),
-                                            registryQuantity: viewModel.registryQuantity(for: product),
                                             isWishlisted: viewModel.isWishlisted(product),
-                                            onAdd: { viewModel.addToCart(product) },
-                                            onRemove: { viewModel.removeFromCart(product) },
-                                            onAddToRegistry: {
-                                                if viewModel.canAddToRegistry(product) {
-                                                    viewModel.addToRegistry(product)
-                                                } else {
-                                                    tabBarVM.selectTab(.registry)
-                                                }
-                                            },
-                                            onRemoveFromRegistry: { viewModel.removeFromRegistry(product) },
                                             onToggleWishlist: { viewModel.toggleWishlist(product) },
                                             onTap: {
                                                 viewModel.recordView(product)
@@ -82,6 +72,28 @@ struct HomeView: View {
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.top, 16)
+
+                                // MARK: - Load More
+                                if viewModel.filteredProducts.count > visibleProductCount {
+                                    Button {
+                                        visibleProductCount += 6
+                                    } label: {
+                                        Text("Load More")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(12)
+                                            .background(Color.white)
+                                            .foregroundColor(.black)
+                                            .cornerRadius(8)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(Color(.systemGray3), lineWidth: 1)
+                                            )
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+                                }
 
                                 // MARK: - "Customers Who Searched… Also Browsed"
                                 if !viewModel.alsoBrowsed.isEmpty {
@@ -104,10 +116,12 @@ struct HomeView: View {
             .navigationTitle(AppStrings.Home.title)
 
             .toolbar {
+
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showSignOutConfirm = true }) {
                         Image(systemName: "person.circle")
                             .font(.system(size: 18))
+
                             .foregroundColor(.primary)
                     }
                 }
@@ -135,6 +149,8 @@ struct HomeView: View {
                 ProductDetailView(product: product)
                     .environmentObject(wishlistRepository)
                     .environmentObject(cartRepository)
+                    .environmentObject(registryRepository)
+                    .environmentObject(tabBarVM)
             }
         }
     }

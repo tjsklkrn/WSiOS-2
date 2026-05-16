@@ -10,13 +10,7 @@ import SwiftUI
 
 struct ProductCardView: View {
     let product: ProductItem
-    let quantity: Int
-    let registryQuantity: Int
     let isWishlisted: Bool
-    let onAdd: () -> Void
-    let onRemove: () -> Void
-    let onAddToRegistry: () -> Void
-    let onRemoveFromRegistry: () -> Void
     let onToggleWishlist: () -> Void
     let onTap: () -> Void
 
@@ -95,17 +89,14 @@ struct ProductCardView: View {
                     .lineLimit(2)
                     .foregroundColor(.primary)
 
-                // MARK: - Price Row
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    // Mocked "Sugg. Price" strikethrough (in production use retailPrice from DTO)
-                    if let price = product.price, price > 0 {
-                        Text("Sugg. Price \(price.suggestedPrice.formatted(.currency(code: "USD")))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .strikethrough(false)
-                    }
+                // MARK: - Suggested Price
+                if let price = product.price, price > 0 {
+                    Text("Sugg. Price \(price.suggestedPrice.formatted(.currency(code: "USD")))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
 
+                // MARK: - Our Price
                 HStack(spacing: 4) {
                     Text("Our Price")
                         .font(.caption)
@@ -120,84 +111,6 @@ struct ProductCardView: View {
                 Text("Free Shipping")
                     .font(.caption2)
                     .foregroundColor(.secondary)
-
-                Spacer()
-
-                // MARK: - Add to Cart
-                if quantity == 0 {
-                    Button(action: onAdd) {
-                        Text(AppStrings.Home.addToCartButton)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding(8)
-                            .background(Color.black)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                } else {
-                    HStack {
-                        Text(AppStrings.Cart.title)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .frame(width: 40, alignment: .leading)
-
-                        Button(action: onRemove) {
-                            Image(systemName: "minus.circle.fill")
-                        }
-
-                        Spacer()
-
-                        Text("\(quantity)")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-
-                        Spacer()
-
-                        Button(action: onAdd) {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                    }
-                    .font(.title3)
-                    .foregroundColor(.black)
-                }
-
-                // MARK: - Add to Registry
-                if registryQuantity == 0 {
-                    Button(AppStrings.Home.addToRegistry, action: onAddToRegistry)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding(8)
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                } else {
-                    HStack {
-                        Text(AppStrings.Registry.title)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .frame(width: 40, alignment: .leading)
-
-                        Button(action: onRemoveFromRegistry) {
-                            Image(systemName: "minus.circle.fill")
-                        }
-
-                        Spacer()
-
-                        Text("\(registryQuantity)")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-
-                        Spacer()
-
-                        Button(action: onAddToRegistry) {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                    }
-                    .font(.title3)
-                    .foregroundColor(.black)
-                }
             }
             .padding(10)
             .background(Color(.systemBackground))
@@ -205,7 +118,7 @@ struct ProductCardView: View {
             .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.plain) // prevents blue highlight on whole card
+        .buttonStyle(.plain)
     }
 }
 

@@ -12,6 +12,8 @@ struct ProductDetailView: View {
     @StateObject private var viewModel: ProductDetailViewModel
     @EnvironmentObject var wishlistRepository: WishlistRepository
     @EnvironmentObject var cartRepository: CartRepository
+    @EnvironmentObject var registryRepository: RegistryRepository
+    @EnvironmentObject var tabBarVM: WSTabBarViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var showReviews  = false
     @State private var showShareSheet = false
@@ -240,6 +242,26 @@ struct ProductDetailView: View {
                             .animation(.easeInOut(duration: 0.2), value: addedToCartFeedback)
                         }
                         .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
+
+                        // MARK: - Add to Registry Button
+                        Button(action: {
+                            viewModel.addToRegistry()
+                        }) {
+                            Text(AppStrings.Home.addToRegistry)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding(14)
+                                .background(Color.white)
+                                .foregroundColor(.black)
+                                .cornerRadius(4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(Color.black, lineWidth: 1)
+                                )
+                        }
+                        .padding(.horizontal, 16)
 
                         Divider().padding(.horizontal, 16).padding(.vertical, 16)
 
@@ -282,7 +304,11 @@ struct ProductDetailView: View {
             }
         }
         .onAppear {
-            viewModel.bind(wishlistRepository: wishlistRepository, cartRepository: cartRepository)
+            viewModel.bind(
+                wishlistRepository: wishlistRepository,
+                cartRepository: cartRepository,
+                registryRepository: registryRepository
+            )
         }
     }
 
@@ -311,30 +337,11 @@ struct ProductDetailView: View {
         .frame(maxWidth: .infinity, minHeight: 260)
     }
 
-    // MARK: - Title Row
-
     private var titleRow: some View {
-        HStack(alignment: .top) {
-            Text(viewModel.product.title)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Spacer(minLength: 12)
-
-            HStack(spacing: 16) {
-                Button(action: { showShareSheet = true }) {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 20))
-                        .foregroundColor(.primary)
-                }
-                Button(action: { viewModel.toggleWishlist() }) {
-                    Image(systemName: viewModel.isWishlisted ? "heart.fill" : "heart")
-                        .font(.system(size: 20))
-                        .foregroundColor(viewModel.isWishlisted ? .red : .primary)
-                }
-            }
-        }
+        Text(viewModel.product.title)
+            .font(.headline)
+            .fontWeight(.semibold)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     // MARK: - Rating Row
