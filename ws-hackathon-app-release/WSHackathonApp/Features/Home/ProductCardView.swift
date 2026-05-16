@@ -2,7 +2,6 @@
 //  ProductCardView.swift
 //  WSHackathonApp
 //
-//  Created by Nilesh Mahajan on 03/04/26.
 //
 
 import Foundation
@@ -10,141 +9,94 @@ import SwiftUI
 
 struct ProductCardView: View {
     let product: ProductItem
+    let quantity: Int
+    let registryQuantity: Int
     let isWishlisted: Bool
+    let onAdd: () -> Void
+    let onRemove: () -> Void
+    let onAddToRegistry: () -> Void
+    let onRemoveFromRegistry: () -> Void
     let onToggleWishlist: () -> Void
-    let onTap: () -> Void
-
-    // Best-seller badge (mocked; production would come from API)
-    private var isBestSeller: Bool { true }
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
 
-                // MARK: - Image + Overlay Badges
-                GeometryReader { geo in
-                    ZStack(alignment: .topLeading) {
-                        AsyncImage(url: product.imageURL) { phase in
-                            if let image = phase.image {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: geo.size.width, height: 150)
-                                    .clipped()
-                                    .cornerRadius(8)
-                            } else if phase.error != nil {
-                                ZStack {
-                                    Color(.systemGray5)
-                                    Image(systemName: "photo")
-                                        .foregroundColor(.gray)
-                                        .font(.system(size: 30))
-                                }
-                                .frame(width: geo.size.width, height: 150)
-                                .cornerRadius(8)
-                            } else {
-                                ZStack {
-                                    Color(.systemGray5)
-                                    ProgressView()
-                                }
-                                .frame(width: geo.size.width, height: 150)
-                                .cornerRadius(8)
-                            }
-                        }
+            // MARK: - Image Area
+            ZStack(alignment: .topTrailing) {
+                productImage
 
-                        // "Best Seller" badge (top-left)
-                        if isBestSeller {
-                            Text("Best Seller")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 3)
-                                .background(Color.black)
-                                .cornerRadius(4, corners: [.topLeft, .bottomRight])
-                        }
-
-                        // Wishlist heart (top-right)
-                        VStack {
-                            HStack {
-                                Spacer()
-                                Button(action: onToggleWishlist) {
-                                    Image(systemName: isWishlisted ? "heart.fill" : "heart")
-                                        .font(.system(size: 18))
-                                        .foregroundColor(isWishlisted ? .red : .white)
-                                        .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
-                                }
-                                .padding(8)
-                            }
-                            Spacer()
-                        }
-                        .frame(width: geo.size.width, height: 150)
-                    }
+                // Heart / Wishlist button
+                Button(action: onToggleWishlist) {
+                    Image(systemName: isWishlisted ? "heart.fill" : "heart")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(isWishlisted ? .red : Color(.systemGray))
+                        .frame(width: 32, height: 32)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
                 }
-                .frame(height: 150)
-
-                // MARK: - Product Title
-                Text(product.title)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
-                    .foregroundColor(.primary)
-
-                // MARK: - Suggested Price
-                if let price = product.price, price > 0 {
-                    Text("Sugg. Price \(price.suggestedPrice.formatted(.currency(code: "USD")))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
-                // MARK: - Our Price
-                HStack(spacing: 4) {
-                    Text("Our Price")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    Text(product.price?.formatted(.currency(code: "USD")) ?? "")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color(red: 0.7, green: 0.1, blue: 0.1))
-                }
-
-                Text("Free Shipping")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                .padding(10)
             }
-            .padding(10)
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
-            .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
-            .frame(maxWidth: .infinity)
+
+            // MARK: - Info Area
+            VStack(alignment: .leading, spacing: 4) {
+                Text(product.title)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(product.price?.formatted(.currency(code: "USD")) ?? "")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.primary)
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
         }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Helpers
-
-private extension Double {
-    /// Returns a slightly inflated "suggested" price for display purposes
-    var suggestedPrice: Double { self * 1.3 }
-}
-
-/// Rounded corners on specific corners only
-private extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-private struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Color(.systemGray4), lineWidth: 1)
         )
-        return Path(path.cgPath)
+        .clipped()
+    }
+
+    // MARK: - Product Image
+    @ViewBuilder
+    private var productImage: some View {
+        AsyncImage(url: product.imageURL) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 160)
+                    .clipped()
+            case .failure:
+                imagePlaceholder
+            default:
+                ZStack {
+                    Color(.systemGray5)
+                    ProgressView()
+                }
+                .frame(height: 160)
+            }
+        }
+        .frame(height: 160)
+        .cornerRadius(16)
+        .clipped()
+    }
+
+    private var imagePlaceholder: some View {
+        ZStack {
+            Color(.systemGray5)
+            Image(systemName: "photo")
+                .foregroundColor(Color(.systemGray3))
+                .font(.system(size: 28))
+        }
+        .frame(height: 160)
+        .cornerRadius(16)
     }
 }

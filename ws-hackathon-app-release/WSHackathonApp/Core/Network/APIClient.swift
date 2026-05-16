@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import FirebaseAuth
 
+
 final class APIClient {
     static let shared = APIClient()
     private init() {}
@@ -41,18 +42,19 @@ final class APIClient {
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
         request.timeoutInterval = AppConstants.API.timeout
-        
-        // Headers from the endpoint definition
+
         endpoint.headers?.forEach {
             request.addValue($0.value, forHTTPHeaderField: $0.key)
         }
         
+
         // Firebase Auth — attach Bearer token for /cart/* and /registry/* endpoints
         if requiresFirebaseAuth(path: endpoint.path) {
             let token = try await fetchFirebaseIDToken()
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         
+
         // Body (only if present)
         if let body = body {
             if endpoint.method == .get {
@@ -76,6 +78,7 @@ final class APIClient {
         return (data, response)
     }
     
+
     // MARK: - Firebase Auth Helpers
     
     /// Returns `true` when the endpoint path requires a Firebase ID token.
@@ -107,6 +110,7 @@ final class APIClient {
         }
     }
     
+
     // MARK: - Encode Helper (Fix for `any Encodable`)
     private func encode(_ value: any Encodable) throws -> Data {
         let encoder = JSONEncoder()

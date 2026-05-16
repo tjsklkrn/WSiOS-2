@@ -11,7 +11,10 @@ enum NetworkError: Error {
     case invalidResponse
     case decodingError
     case serverError(Int)
+
     /// Thrown when a cart or registry request is attempted with no signed-in Firebase user,
     /// or when the Firebase ID token fetch fails.
     case unauthenticated(String)
+
+
 }

@@ -7,137 +7,145 @@ import SwiftUI
 
 struct WishlistView: View {
 
-    @StateObject private var viewModel = WishlistViewModel()
     @EnvironmentObject var wishlistRepository: WishlistRepository
     @EnvironmentObject var cartRepository: CartRepository
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.items.isEmpty {
+                if wishlistRepository.items.isEmpty {
                     emptyState
                 } else {
-                    itemsList
+                    itemList
                 }
             }
-            .navigationTitle(AppStrings.Wishlist.title)
+            .navigationTitle("Wishlist")
             .navigationBarTitleDisplayMode(.large)
-            .background(Color(.systemGray6).ignoresSafeArea())
-        }
-        .onAppear {
-            viewModel.bind(wishlistRepository: wishlistRepository)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
         }
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "heart.slash")
+            Image(systemName: "heart")
                 .font(.system(size: 52))
-                .foregroundColor(.secondary)
-            Text(AppStrings.Wishlist.emptyTitle)
-                .font(.headline)
-            Text(AppStrings.Wishlist.emptyMessage)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(.systemGray3))
+            Text("Your wishlist is empty")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.primary)
+            Text("Tap the heart on any product\nto save it here.")
+                .font(.system(size: 14))
+                .foregroundColor(Color(.systemGray))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
             Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Items List
+    // MARK: - Item List
 
-    private var itemsList: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(viewModel.items) { item in
-                    WishlistItemRow(
-                        item: item,
-                        onRemove: { viewModel.remove(item: item) },
-                        onAddToCart: {
-                            // Convert WishlistItem -> ProductItem for cart
-                            let product = ProductItem(
-                                id: item.id,
-                                title: item.title,
-                                price: item.price,
-                                path: item.path
-                            )
-                            cartRepository.add(product: product)
-                        }
+    private var itemList: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: 0) {
+                ForEach(wishlistRepository.items) { product in
+                    WishlistRow(
+                        product: product,
+                        onRemove: { wishlistRepository.remove(product.id) },
+                        onAddToCart: { cartRepository.add(product: product) }
                     )
+                    Divider()
+                        .padding(.leading, 88)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
+            .padding(.top, 8)
         }
     }
 }
 
-// MARK: - WishlistItemRow
+// MARK: - Wishlist Row
 
-private struct WishlistItemRow: View {
-    let item: WishlistItem
+private struct WishlistRow: View {
+    let product: ProductItem
     let onRemove: () -> Void
     let onAddToCart: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             // Product image
-            AsyncImage(url: item.imageURL) { phase in
-                if let image = phase.image {
+            AsyncImage(url: product.imageURL) { phase in
+                switch phase {
+                case .success(let image):
                     image
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 80, height: 80)
+                        .frame(width: 72, height: 72)
                         .clipped()
-                        .cornerRadius(8)
-                } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray5))
-                        .frame(width: 80, height: 80)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                        )
+                        .cornerRadius(10)
+                case .failure:
+                    placeholder
+                default:
+                    ZStack {
+                        Color(.systemGray5)
+                        ProgressView()
+                    }
+                    .frame(width: 72, height: 72)
+                    .cornerRadius(10)
                 }
             }
+            .frame(width: 72, height: 72)
 
+            // Info
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.title)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
-                Text(item.price.formatted(.currency(code: "USD")))
-                    .font(.subheadline)
+                Text(product.title)
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.primary)
+                    .lineLimit(2)
 
-                HStack(spacing: 8) {
-                    Button(action: onAddToCart) {
-                        Text(AppStrings.Home.addToCartButton)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.black)
-                            .foregroundColor(.white)
-                            .cornerRadius(6)
-                    }
-                    Button(action: onRemove) {
-                        Image(systemName: "heart.fill")
-                            .foregroundColor(.red)
-                            .font(.system(size: 18))
-                    }
-                }
+                Text(product.price?.formatted(.currency(code: "USD")) ?? "")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.primary)
             }
 
             Spacer()
+
+            // Actions
+            VStack(spacing: 10) {
+                Button(action: onRemove) {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.red)
+                }
+
+                Button(action: onAddToCart) {
+                    Image(systemName: "cart.badge.plus")
+                        .font(.system(size: 16))
+                        .foregroundColor(.primary)
+                }
+            }
+            .padding(.trailing, 4)
         }
-        .padding(12)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+    }
+
+    private var placeholder: some View {
+        ZStack {
+            Color(.systemGray5)
+            Image(systemName: "photo")
+                .foregroundColor(Color(.systemGray3))
+                .font(.system(size: 22))
+        }
+        .frame(width: 72, height: 72)
+        .cornerRadius(10)
     }
 }

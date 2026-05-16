@@ -9,7 +9,9 @@ import Foundation
 enum AppConstants {
     
     enum API {
-        static let baseURL = "http://10.2.4.125:3001"
+
+        static let baseURL = "http://localhost:3001"
+
         static let imageBasePath = baseURL + "/images/"
         static let timeout: TimeInterval = 30
     }

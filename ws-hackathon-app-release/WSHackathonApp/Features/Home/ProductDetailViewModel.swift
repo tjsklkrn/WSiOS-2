@@ -99,7 +99,7 @@ class ProductDetailViewModel: ObservableObject {
     }
 
     func toggleWishlist() {
-        wishlistRepository?.toggle(product: product)
+        wishlistRepository?.toggle(product)
         isWishlisted.toggle()
     }
 

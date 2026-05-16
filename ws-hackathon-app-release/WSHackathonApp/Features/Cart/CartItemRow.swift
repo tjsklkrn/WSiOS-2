@@ -8,44 +8,42 @@
 import SwiftUI
 
 struct CartItemRow: View {
-    
+
     let item: CartItem
     let onAdd: () -> Void
     let onRemove: () -> Void
     let onDelete: () -> Void
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            let url = item.imageURL
             // MARK: - Image
-            CustomAsyncImage(url: url)
+            CustomAsyncImage(url: item.imageURL)
                 .frame(width: 80, height: 80)
                 .cornerRadius(8)
                 .clipped()
-            
+
             // MARK: - Info
             VStack(alignment: .leading, spacing: 6) {
-                
                 Text(item.title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .lineLimit(2)
-                
+
                 Text("$\(item.price, specifier: "%.2f")")
                     .font(.subheadline)
                     .foregroundColor(.black)
-                
+
                 Spacer()
-                
+
                 // MARK: - Quantity Controls
                 HStack(spacing: 12) {
                     Button(action: onRemove) {
                         Image(systemName: "minus.circle.fill")
                     }
-                    
+
                     Text("\(item.quantity)")
                         .fontWeight(.medium)
-                    
+
                     Button(action: onAdd) {
                         Image(systemName: "plus.circle.fill")
                     }
@@ -53,17 +51,17 @@ struct CartItemRow: View {
                 .font(.title3)
                 .foregroundColor(.black)
             }
-            
+
             Spacer()
-            
+
             // MARK: - Total Price per item & Delete
             VStack(alignment: .trailing, spacing: 12) {
                 Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                
+
                 Spacer()
-                
+
                 Button(action: onDelete) {
                     Image(systemName: "trash")
                         .font(.system(size: 18))

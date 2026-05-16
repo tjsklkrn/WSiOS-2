@@ -7,7 +7,9 @@
 
 import SwiftUI
 
+
 struct WSTabView: View {
+
     @EnvironmentObject var viewModel: WSTabBarViewModel
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var registryRepository: RegistryRepository

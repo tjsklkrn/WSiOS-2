@@ -39,6 +39,7 @@ struct WSHackathonAppApp: App {
 
     @StateObject private var registryRepo = RegistryRepository()
     @StateObject private var cartRepo = CartRepository()
+    @StateObject private var wishlistRepo = WishlistRepository()
     @StateObject private var tabBarVM = WSTabBarViewModel()
     @StateObject private var authVM = AuthViewModel()
 
@@ -48,12 +49,14 @@ struct WSHackathonAppApp: App {
                 WSTabView()
                     .environmentObject(registryRepo)
                     .environmentObject(cartRepo)
+                    .environmentObject(wishlistRepo)
                     .environmentObject(tabBarVM)
                     .environmentObject(authVM)
             } else {
                 AuthContainerView()
                     .environmentObject(authVM)
             }
+
 
         }
     }

@@ -33,9 +33,11 @@ struct CartView: View {
                                     CartItemRow(
                                         item: item,
                                         onAdd: { viewModel.add(item) },
+
                                         onRemove: { viewModel.removeItem(item) },
                                         onDelete: { viewModel.deleteItem(item) }
-                                    )
+
+            )
                                 }
                             }
                             .padding(16)

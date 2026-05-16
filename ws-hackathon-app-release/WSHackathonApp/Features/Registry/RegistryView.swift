@@ -87,6 +87,7 @@ struct RegistryView: View {
 private extension RegistryView {
     
     var registryCard: some View {
+
         VStack(spacing: 12) {
 
             // 1. CREATE A REGISTRY  (primary)
@@ -200,6 +201,7 @@ private extension RegistryView {
         }
         .padding(.horizontal, 0)
     }
+
 
     var createRegistryButton: some View {
         HStack(spacing: 12) {
