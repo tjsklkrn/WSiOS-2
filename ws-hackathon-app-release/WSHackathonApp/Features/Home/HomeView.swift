@@ -14,6 +14,9 @@ struct HomeView: View {
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var registryRepository: RegistryRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
+    @EnvironmentObject var authVM: AuthViewModel
+
+    @State private var showSignOutConfirm = false
     
     var body: some View {
         NavigationStack {
@@ -71,6 +74,23 @@ struct HomeView: View {
                 }
             }
             .navigationTitle(AppStrings.Home.title)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showSignOutConfirm = true }) {
+                        Image(systemName: "person.circle")
+                            .font(.system(size: 18))
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+            .confirmationDialog("Sign Out", isPresented: $showSignOutConfirm, titleVisibility: .visible) {
+                Button("Sign Out", role: .destructive) {
+                    authVM.signOut()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Are you sure you want to sign out?")
+            }
             .onAppear {
                 Task {
                     viewModel.bind(
