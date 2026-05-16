@@ -2,6 +2,16 @@
   "name": "mock-api",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "dependencies": { "express": "^4.19.2" }
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/pbt.test.js"
+  },
+  "dependencies": {
+    "@pinecone-database/pinecone": "^3.0.3",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.7.0"
+  },
+  "devDependencies": {
+    "fast-check": "^3.22.0"
+  }
 }

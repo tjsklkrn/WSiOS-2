@@ -1,0 +1,46 @@
+{
+  "rules": [
+    {
+      "sourceProductType": "cutting-boards-storage",
+      "targetProductType": "cutting-board-oil",
+      "relation": "MAINTAINED_BY",
+      "context": "Product Care Duo",
+      "weight": 3
+    },
+    {
+      "sourceProductType": "dutch-ovens",
+      "targetProductType": "fry-pans-skillets",
+      "relation": "RELATED_CATEGORY",
+      "context": "Premium Cookware Set",
+      "weight": 4
+    },
+    {
+      "sourceProductType": "coffee-maker",
+      "targetProductType": "cups-and-saucers",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Coffee & Tea Station",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "dutch-ovens",
+      "targetProductType": "cutting-boards-storage",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Cookware Prep Essentials",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "oil",
+      "targetProductType": "dutch-ovens",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Cooking Essentials",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "oil",
+      "targetProductType": "fry-pans-skillets",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Cooking Essentials",
+      "weight": 2
+    }
+  ]
+}

@@ -1,6 +1,14 @@
+// Load environment variables from .env before any other module is required
+require("dotenv").config();
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+
+// Trigger Firebase Admin SDK initialization before any request is handled
+require("./firebase/adminInit");
+
+const { buildGraph } = require("./services/productGraph");
 
 const app = express();
 const PORT = 3001;
@@ -46,6 +54,21 @@ app.get("/skus", (req, res) => {
   return delayedJson(res, "skus.json", 200, 700);
 });
 
+// Mount new feature routes
+app.use("/cart", require("./routes/cart"));
+app.use("/registry", require("./routes/registry"));
+
+// Centralized error handler (must be last app.use)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal server error",
+    code: err.code || "INTERNAL_ERROR"
+  });
+});
+
+// Build the product graph synchronously before accepting requests
+buildGraph();
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Mock API running on http://0.0.0.0:${PORT}`);

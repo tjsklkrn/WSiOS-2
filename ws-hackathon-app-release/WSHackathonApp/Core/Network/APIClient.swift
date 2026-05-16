@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import FirebaseAuth
 
 final class APIClient {
     static let shared = APIClient()
@@ -41,9 +42,15 @@ final class APIClient {
         request.httpMethod = endpoint.method.rawValue
         request.timeoutInterval = AppConstants.API.timeout
         
-        // Headers
+        // Headers from the endpoint definition
         endpoint.headers?.forEach {
             request.addValue($0.value, forHTTPHeaderField: $0.key)
+        }
+        
+        // Firebase Auth — attach Bearer token for /cart/* and /registry/* endpoints
+        if requiresFirebaseAuth(path: endpoint.path) {
+            let token = try await fetchFirebaseIDToken()
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         
         // Body (only if present)
@@ -67,6 +74,37 @@ final class APIClient {
         }
         
         return (data, response)
+    }
+    
+    // MARK: - Firebase Auth Helpers
+    
+    /// Returns `true` when the endpoint path requires a Firebase ID token.
+    private func requiresFirebaseAuth(path: String) -> Bool {
+        path.hasPrefix("/cart") || path.hasPrefix("/registry")
+    }
+    
+    /// Fetches the current user's Firebase ID token using async/await.
+    /// Throws `NetworkError.unauthenticated` if there is no signed-in user or the token fetch fails.
+    private func fetchFirebaseIDToken() async throws -> String {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw NetworkError.unauthenticated("No signed-in Firebase user. Please sign in before accessing cart or registry.")
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            currentUser.getIDToken { token, error in
+                if let error = error {
+                    continuation.resume(throwing: NetworkError.unauthenticated(
+                        "Failed to retrieve Firebase ID token: \(error.localizedDescription)"
+                    ))
+                } else if let token = token {
+                    continuation.resume(returning: token)
+                } else {
+                    continuation.resume(throwing: NetworkError.unauthenticated(
+                        "Firebase ID token was nil with no error."
+                    ))
+                }
+            }
+        }
     }
     
     // MARK: - Encode Helper (Fix for `any Encodable`)
