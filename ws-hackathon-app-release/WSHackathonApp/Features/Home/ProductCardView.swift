@@ -2,7 +2,6 @@
 //  ProductCardView.swift
 //  WSHackathonApp
 //
-//
 
 import Foundation
 import SwiftUI
@@ -60,7 +59,6 @@ struct ProductCardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(Color(.systemGray4), lineWidth: 1)
         )
-        .clipped()
     }
 
     // MARK: - Product Image
@@ -72,7 +70,7 @@ struct ProductCardView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 160)
+                    .frame(width: .infinity, height: 160)
                     .clipped()
             case .failure:
                 imagePlaceholder
@@ -81,12 +79,11 @@ struct ProductCardView: View {
                     Color(.systemGray5)
                     ProgressView()
                 }
-                .frame(height: 160)
             }
         }
-        .frame(height: 160)
-        .cornerRadius(16)
+        .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160)
         .clipped()
+        .cornerRadius(16, corners: [.topLeft, .topRight])
     }
 
     private var imagePlaceholder: some View {
@@ -96,7 +93,27 @@ struct ProductCardView: View {
                 .foregroundColor(Color(.systemGray3))
                 .font(.system(size: 28))
         }
-        .frame(height: 160)
-        .cornerRadius(16)
+    }
+}
+
+// MARK: - Selective corner radius helper
+
+private extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+private struct RoundedCorner: Shape {
+    var radius: CGFloat
+    var corners: UIRectCorner
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }

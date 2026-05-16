@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 
-@MainActor
 class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var products: [ProductItem] = []
@@ -28,8 +27,7 @@ class HomeViewModel: ObservableObject {
         self.wishlistRepository = wishlistRepository
     }
 
-    // MARK: - Cart
-
+    // Cart
     func addToCart(_ product: ProductItem) {
         cartRepository?.add(product: product)
     }
@@ -38,22 +36,23 @@ class HomeViewModel: ObservableObject {
         cartRepository?.remove(productId: product.id)
     }
 
-    // MARK: - Registry
-
+    // Registry
     func addToRegistry(_ product: ProductItem) {
         registryRepository?.addProduct(product)
     }
 
     func canAddToRegistry(_ product: ProductItem) -> Bool {
-        registryRepository?.isActiveRegistry ?? false
+        if let registryRepository, registryRepository.isActiveRegistry {
+            return true
+        }
+        return false
     }
 
     func removeFromRegistry(_ product: ProductItem) {
         registryRepository?.removeItem(product.id)
     }
 
-    // MARK: - Wishlist
-
+    // Wishlist
     func toggleWishlist(_ product: ProductItem) {
         wishlistRepository?.toggle(product)
     }
@@ -61,8 +60,6 @@ class HomeViewModel: ObservableObject {
     func isWishlisted(_ product: ProductItem) -> Bool {
         wishlistRepository?.isWishlisted(product) ?? false
     }
-
-    // MARK: - Quantities
 
     func quantity(for product: ProductItem) -> Int {
         cartRepository?.items.first(where: { $0.id == product.id })?.quantity ?? 0
@@ -72,16 +69,13 @@ class HomeViewModel: ObservableObject {
         registryRepository?.currentRegistry?.items.first(where: { $0.id == product.id })?.quantity ?? 0
     }
 
-    // MARK: - Filtered Products
-
     var filteredProducts: [ProductItem] {
         if searchText.isEmpty {
             return products
+        } else {
+            return products.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
         }
-        return products.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
     }
-
-    // MARK: - Fetch
 
     func fetchProducts() async {
         guard !hasLoaded else { return }

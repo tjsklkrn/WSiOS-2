@@ -1,7 +1,7 @@
 //
 //  HomeView.swift
 //  WSHackathonApp
-
+//
 
 import SwiftUI
 
@@ -14,14 +14,12 @@ private struct PromoBanner: Identifiable {
     let accentColor: Color
 }
 
-
 struct HomeView: View {
 
     @StateObject private var viewModel = HomeViewModel()
 
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var registryRepository: RegistryRepository
-
     @EnvironmentObject var wishlistRepository: WishlistRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
 
@@ -37,11 +35,9 @@ struct HomeView: View {
         PromoBanner(id: 2, headline: "Members Save 15%", subtext: "Join our loyalty program today", icon: "star.circle", accentColor: Color(red: 0.93, green: 0.90, blue: 0.96)),
     ]
 
-
     var body: some View {
         NavigationStack {
             ZStack {
-
                 Color(.systemBackground)
                     .ignoresSafeArea()
 
@@ -68,12 +64,10 @@ struct HomeView: View {
                     }
                 }
             }
-
             .onAppear {
                 Task {
                     viewModel.bind(
                         cartRepository: cartRepository,
-
                         registryRepository: registryRepository,
                         wishlistRepository: wishlistRepository
                     )
@@ -245,13 +239,10 @@ struct HomeView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-
             }
         }
     }
 }
-
-
 
 // MARK: - Banner Card
 private struct BannerCard: View {
@@ -322,4 +313,3 @@ private struct CategoryChip: View {
         }
     }
 }
-
