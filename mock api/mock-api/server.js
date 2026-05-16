@@ -57,6 +57,7 @@ app.get("/skus", (req, res) => {
 // Mount new feature routes
 app.use("/cart", require("./routes/cart"));
 app.use("/registry", require("./routes/registry"));
+app.use("/search", require("./routes/search"));
 
 // Centralized error handler (must be last app.use)
 app.use((err, req, res, next) => {

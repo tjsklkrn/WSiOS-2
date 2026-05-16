@@ -200,6 +200,39 @@ router.get("/search", async (req, res, next) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /registry/:registryId — fetch full registry metadata (public)
+// Returns all metadata fields (excluding ownerUid). 404 if private or not found.
+// ---------------------------------------------------------------------------
+
+router.get("/:registryId", async (req, res, next) => {
+  try {
+    const { registryId } = req.params;
+    const docSnap = await db.collection("registries").doc(registryId).get();
+
+    if (!docSnap.exists || !docSnap.data().isPublic) {
+      return res.status(404).json({ error: "Registry not found" });
+    }
+
+    const d = docSnap.data();
+    const responseBody = {
+      registryId: docSnap.id,
+      firstName:   d.firstName,
+      lastName:    d.lastName,
+      eventType:   d.eventType,
+      eventDate:   d.eventDate,
+      isPublic:    d.isPublic,
+      createdAt:   d.createdAt,
+      ...(d.coRegistrantFirstName && { coRegistrantFirstName: d.coRegistrantFirstName }),
+      ...(d.coRegistrantLastName  && { coRegistrantLastName:  d.coRegistrantLastName  }),
+    };
+
+    return res.json(responseBody);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---------------------------------------------------------------------------
 // GET /registry/:registryId/items — fetch all items grouped by category (public)
 // ---------------------------------------------------------------------------
 
@@ -451,6 +484,78 @@ router.delete("/:registryId/items/:productId", firebaseAuth, async (req, res, ne
     }
     if (err.statusCode === 403) {
       return res.status(403).json({ error: err.message, code: err.code });
+    }
+    next(err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// PATCH /registry/:registryId/items/:productId/purchased — toggle purchased flag
+//
+// Public endpoint — no auth required. A guest purchasing a gift calls this
+// to mark the item as purchased so the registry owner sees it as fulfilled.
+//
+// Body: { purchased: boolean }
+//
+// Marks ALL entries for that productId (across all categories) as purchased/unpurchased.
+// Uses a Firestore transaction for atomicity.
+// Returns 404 if registry or product not found.
+// ---------------------------------------------------------------------------
+
+router.patch("/:registryId/items/:productId/purchased", async (req, res, next) => {
+  try {
+    const { registryId, productId } = req.params;
+    const { purchased } = req.body || {};
+
+    if (typeof purchased !== "boolean") {
+      return res.status(400).json({
+        error: "Body must include 'purchased' as a boolean",
+        code: "INVALID_PURCHASED_VALUE",
+      });
+    }
+
+    const docRef = db.collection("registries").doc(registryId);
+
+    let updatedItems;
+    await db.runTransaction(async (t) => {
+      const docSnap = await t.get(docRef);
+
+      if (!docSnap.exists) {
+        const err = new Error("Registry not found");
+        err.statusCode = 404;
+        throw err;
+      }
+
+      const items = docSnap.data().items ? [...docSnap.data().items] : [];
+
+      // Find all entries for this productId (may span multiple categories)
+      const matchingIndices = items
+        .map((item, idx) => (item.productId === productId ? idx : -1))
+        .filter((idx) => idx !== -1);
+
+      if (matchingIndices.length === 0) {
+        const err = new Error(`Item not found in registry: ${productId}`);
+        err.statusCode = 404;
+        throw err;
+      }
+
+      for (const idx of matchingIndices) {
+        items[idx] = { ...items[idx], purchased };
+      }
+
+      t.update(docRef, { items });
+      updatedItems = items;
+    });
+
+    return res.json({
+      registryId,
+      productId,
+      purchased,
+      itemsByCategory: groupItemsByCategory(updatedItems),
+    });
+  } catch (err) {
+    if (err.statusCode === 404) {
+      return res.status(404).json({ error: err.message });
     }
     next(err);
   }

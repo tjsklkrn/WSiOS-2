@@ -43,6 +43,7 @@ const app = express();
 app.use(express.json());
 app.use("/cart",     require("../routes/cart"));
 app.use("/registry", require("../routes/registry"));
+app.use("/search",   require("../routes/search"));
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message, code: err.code });
 });
@@ -335,6 +336,152 @@ async function testRegistryEndpoints() {
   assert("GET /registry/search after delete returns 404", r.status === 404);
 }
 
+async function testRegistryGetAndPurchased() {
+  console.log("\n── Registry GET/:id + Purchased Toggle ─────────────────────");
+
+  // Create a registry with one item to test against
+  let r = await request("POST", "/registry", {
+    firstName: "Alice", lastName: "Wonder",
+    eventType: "housewarming", eventDate: "2025-11-01",
+    coRegistrantFirstName: "Bob", coRegistrantLastName: "Wonder"
+  });
+  assert("Setup: POST /registry returns 201", r.status === 201);
+  const registryId = r.body.registryId;
+
+  // Add an item
+  await request("POST", `/registry/${registryId}/items`, {
+    productId: "2453926", quantity: 2, categoryId: "cookware"
+  });
+
+  // ── GET /registry/:id ──────────────────────────────────────────────────
+
+  // Public registry — should return metadata
+  r = await request("GET", `/registry/${registryId}`, null, { Authorization: "" });
+  assert("GET /registry/:id returns 200", r.status === 200);
+  assert("GET /registry/:id has registryId", r.body.registryId === registryId);
+  assert("GET /registry/:id has firstName", r.body.firstName === "Alice");
+  assert("GET /registry/:id has lastName", r.body.lastName === "Wonder");
+  assert("GET /registry/:id has eventType", r.body.eventType === "housewarming");
+  assert("GET /registry/:id has eventDate", r.body.eventDate === "2025-11-01");
+  assert("GET /registry/:id has isPublic", r.body.isPublic === true);
+  assert("GET /registry/:id has createdAt", typeof r.body.createdAt === "string");
+  assert("GET /registry/:id has coRegistrantFirstName", r.body.coRegistrantFirstName === "Bob");
+  assert("GET /registry/:id does NOT expose ownerUid", r.body.ownerUid === undefined);
+  assert("GET /registry/:id does NOT expose items array", r.body.items === undefined);
+
+  // Make private — should 404
+  await request("PATCH", `/registry/${registryId}`, { isPublic: false });
+  r = await request("GET", `/registry/${registryId}`, null, { Authorization: "" });
+  assert("GET /registry/:id private registry returns 404", r.status === 404);
+
+  // Restore public
+  await request("PATCH", `/registry/${registryId}`, { isPublic: true });
+
+  // Non-existent registry — should 404
+  r = await request("GET", `/registry/nonexistent-id-xyz`, null, { Authorization: "" });
+  assert("GET /registry/:id non-existent returns 404", r.status === 404);
+
+  // ── PATCH purchased toggle ─────────────────────────────────────────────
+
+  // Mark as purchased — valid
+  r = await request("PATCH", `/registry/${registryId}/items/2453926/purchased`,
+    { purchased: true }, { Authorization: "" });
+  assert("PATCH purchased returns 200", r.status === 200);
+  assert("PATCH purchased sets purchased=true", r.body.purchased === true);
+  assert("PATCH purchased updates item in response", r.body.itemsByCategory?.cookware?.[0]?.purchased === true);
+  assert("PATCH purchased returns registryId", r.body.registryId === registryId);
+  assert("PATCH purchased returns productId", r.body.productId === "2453926");
+
+  // Verify dashboard reflects purchased count
+  r = await request("GET", `/registry/${registryId}/dashboard`, null, { Authorization: "" });
+  assert("Dashboard purchasedCount = 2 after toggle", r.body.purchasedCount === 2);
+  assert("Dashboard remainingCount = 0 after toggle", r.body.remainingCount === 0);
+
+  // Mark as unpurchased — toggle back
+  r = await request("PATCH", `/registry/${registryId}/items/2453926/purchased`,
+    { purchased: false }, { Authorization: "" });
+  assert("PATCH purchased toggle back to false returns 200", r.status === 200);
+  assert("PATCH purchased sets purchased=false", r.body.purchased === false);
+
+  // Verify dashboard reflects unpurchased
+  r = await request("GET", `/registry/${registryId}/dashboard`, null, { Authorization: "" });
+  assert("Dashboard purchasedCount = 0 after untoggle", r.body.purchasedCount === 0);
+  assert("Dashboard remainingCount = 2 after untoggle", r.body.remainingCount === 2);
+
+  // Invalid body — not a boolean
+  r = await request("PATCH", `/registry/${registryId}/items/2453926/purchased`,
+    { purchased: "yes" }, { Authorization: "" });
+  assert("PATCH purchased invalid body returns 400", r.status === 400);
+  assert("PATCH purchased invalid body has INVALID_PURCHASED_VALUE code", r.body.code === "INVALID_PURCHASED_VALUE");
+
+  // Missing purchased field
+  r = await request("PATCH", `/registry/${registryId}/items/2453926/purchased`,
+    {}, { Authorization: "" });
+  assert("PATCH purchased missing field returns 400", r.status === 400);
+
+  // Unknown productId
+  r = await request("PATCH", `/registry/${registryId}/items/UNKNOWN_999/purchased`,
+    { purchased: true }, { Authorization: "" });
+  assert("PATCH purchased unknown productId returns 404", r.status === 404);
+
+  // Unknown registryId
+  r = await request("PATCH", `/registry/nonexistent-xyz/items/2453926/purchased`,
+    { purchased: true }, { Authorization: "" });
+  assert("PATCH purchased unknown registryId returns 404", r.status === 404);
+
+  // Cleanup
+  await request("DELETE", `/registry/${registryId}`);
+}
+
+async function testSearchEndpoint() {
+  console.log("\n── Semantic Search (Pinecone) ──────────────────────────────");
+
+  // Missing query param
+  let r = await request("GET", "/search", null, { Authorization: "" });
+  assert("GET /search missing q returns 400", r.status === 400);
+  assert("GET /search missing q has MISSING_QUERY code", r.body.code === "MISSING_QUERY");
+
+  // Keyword search
+  r = await request("GET", "/search?q=cast+iron+cookware", null, { Authorization: "" });
+  assert("GET /search keyword query returns 200", r.status === 200);
+  assert("GET /search has results array", Array.isArray(r.body.results));
+  assert("GET /search has source field", typeof r.body.source === "string");
+  assert("GET /search returns at most 5 results by default", r.body.results.length <= 5);
+
+  if (r.body.results.length > 0) {
+    const top = r.body.results[0];
+    assert("Search result has productId", typeof top.productId === "string");
+    assert("Search result has name", typeof top.name === "string");
+    assert("Search result has price", typeof top.price === "number");
+    assert("Search result has imagePath", typeof top.imagePath === "string");
+    assert("Search result has availability", typeof top.availability === "string");
+    assert("Search result has score", typeof top.score === "number");
+    assert("Search 'cast iron' top result is Dutch Oven or Skillet",
+      top.productId === "2453926" || top.productId === "181543");
+  }
+
+  // Natural language query
+  r = await request("GET", "/search?q=gift+for+a+chef", null, { Authorization: "" });
+  assert("GET /search natural language returns 200", r.status === 200);
+  assert("GET /search natural language has results", r.body.results.length > 0);
+
+  // topK param
+  r = await request("GET", "/search?q=cookware&topK=3", null, { Authorization: "" });
+  assert("GET /search topK=3 returns at most 3 results", r.body.results.length <= 3);
+
+  // topK clamped to max 10
+  r = await request("GET", "/search?q=cookware&topK=99", null, { Authorization: "" });
+  assert("GET /search topK=99 clamped to max 10", r.body.results.length <= 10);
+
+  // Results are sorted by score descending
+  r = await request("GET", "/search?q=dutch+oven", null, { Authorization: "" });
+  if (r.body.results.length > 1) {
+    const scores = r.body.results.map(x => x.score);
+    const isSorted = scores.every((s, i) => i === 0 || s <= scores[i - 1]);
+    assert("GET /search results sorted by score descending", isSorted);
+  }
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -347,6 +494,8 @@ async function main() {
     await testBundleEndpoint();
     await testRecommendationsEndpoint();
     await testRegistryEndpoints();
+    await testRegistryGetAndPurchased();
+    await testSearchEndpoint();
   } catch (err) {
     console.error("\nUnhandled error during tests:", err);
     fail++;
