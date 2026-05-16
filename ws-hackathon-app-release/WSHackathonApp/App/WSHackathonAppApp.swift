@@ -33,6 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct WSHackathonAppApp: App {
 
+
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var delegate
 
@@ -53,6 +54,7 @@ struct WSHackathonAppApp: App {
                 AuthContainerView()
                     .environmentObject(authVM)
             }
+
         }
     }
 }

@@ -11,6 +11,14 @@ struct ProductItem: Identifiable {
     let title: String
     let price: Double?
     let path: String?
+
+    // Memberwise initializer (used when constructing from WishlistItem etc.)
+    init(id: String, title: String, price: Double?, path: String?) {
+        self.id = id
+        self.title = title
+        self.price = price
+        self.path = path
+    }
     
     var imageURL: URL? {
         if let imageUrl = path {

@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-struct WSTabView: View {    
+struct WSTabView: View {
     @EnvironmentObject var viewModel: WSTabBarViewModel
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var registryRepository: RegistryRepository
-    
+    @EnvironmentObject var wishlistRepository: WishlistRepository
+
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
             ForEach(viewModel.tabs, id: \.rawValue) { tab in
@@ -24,7 +25,7 @@ struct WSTabView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func view(for tab: TabItem) -> some View {
         switch tab {
