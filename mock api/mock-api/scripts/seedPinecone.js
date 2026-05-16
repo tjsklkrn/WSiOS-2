@@ -1,5 +1,8 @@
 "use strict";
 
+// Load .env from the parent directory (mock-api root)
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
+
 /**
  * scripts/seedPinecone.js
  *
@@ -105,20 +108,18 @@ async function seed() {
 
   console.log(`[seedPinecone] Using Pinecone index: "${indexName}", namespace: "${namespace}"`);
 
-  // 4. Build records
+  // 4. Build records — metadata fields must be flat (string/number/boolean)
   const records = skus.map((sku) => {
     const embeddingText = buildEmbeddingText(sku);
     const props = sku.properties || {};
 
     return {
-      id: sku.id,
+      _id: sku.id,
       text: embeddingText,
-      metadata: {
-        productId: sku.id,
-        name: sku.name,
-        productType: parseArrayString(props.productType).join(" "),
-        brand: parseArrayString(props.brand).join(" "),
-      },
+      productId: sku.id,
+      name: sku.name,
+      productType: parseArrayString(props.productType).join(" "),
+      brand: parseArrayString(props.brand).join(" "),
     };
   });
 
@@ -132,7 +133,7 @@ async function seed() {
     const totalBatches = Math.ceil(records.length / BATCH_SIZE);
 
     try {
-      await index.namespace(namespace).upsertRecords(batch);
+      await index.namespace(namespace).upsertRecords({ records: batch });
       totalUpserted += batch.length;
       console.log(
         `[seedPinecone] ✓ Batch ${batchNum}/${totalBatches} — upserted ${batch.length} records ` +

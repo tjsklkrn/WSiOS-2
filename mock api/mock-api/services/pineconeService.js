@@ -86,7 +86,7 @@ async function queryForCart(cartProductIds) {
     let response;
     try {
       response = await pineconeIndex.searchRecords({
-        query: { inputs: { text: queryText }, topK: 10 },
+        query: { topK: 10, inputs: { text: queryText } },
         namespace: NAMESPACE,
       });
     } catch (err) {

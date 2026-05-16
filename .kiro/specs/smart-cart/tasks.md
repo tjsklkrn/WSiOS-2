@@ -78,7 +78,7 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Export `buildGraph()` (constructs and freezes the singleton) and `getGraph()` (returns the singleton); export `skusMap` for use by other services
     - _Requirements: 1.7, 1.9_
 
-  - [ ]* 3.4 Write property tests for graph node construction (Properties 1–4)
+  - [x] 3.4 Write property tests for graph node construction (Properties 1–4)
     - **Property 1: Product Graph Node Construction Invariants** — for any SKU, verify Product/Brand/Material nodes and BRANDED_BY/MADE_OF edges exist with correct field values
     - **Property 2: Array String Parser Round-Trip** — for any `"[a, b, c]"` string, verify output matches manual split+trim; for scalar strings, verify single-element array
     - **Property 3: RELATED_CATEGORY Edge Weight Hierarchy** — for any two SKUs sharing collection or productType, verify edge weight is 4 for collection match, 2 for productType-only match
@@ -116,7 +116,7 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Include the full `PRODUCT_TYPE_TO_REGISTRY_CATEGORY` and `VALID_REGISTRY_CATEGORIES` maps from the design document
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-  - [ ]* 5.4 Write property tests for cart services (Properties 7, 8, 9)
+  - [x] 5.4 Write property tests for cart services (Properties 7, 8, 9)
     - **Property 7: Bundle Detection Invariants** — verify collection bundles form before brand bundles, registryCategory is always one of 7 valid values, highest-priced item determines category
     - **Property 8: Availability Routing Invariants** — verify NLA products land in saveForLater only, BACK_ORDERED products land in items with backOrdered:true, saveForLater array always present
     - **Property 9: Cart Total Price Calculation** — verify totalPrice = sum(sellingPrice × quantity) and totalItems = sum(quantity) for any cart state
@@ -149,7 +149,7 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Implement `getRecommendations(cartItems)`: fan out graph traversal (sync) and Pinecone query (async) using `Promise.all` + `Promise.race` with 1000ms timeout; merge; ground against graph nodes (`graph.nodes.has("prod_" + c.productId)`); attach metadata from `skusMap`; return recommendations array
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [ ]* 6.4 Write property tests for merge algorithm and grounding (Properties 5, 6)
+  - [x] 6.4 Write property tests for merge algorithm and grounding (Properties 5, 6)
     - **Property 5: Recommendations Merge Algorithm Invariants** — verify no duplicate productIds, graph score retained when both sources present, sorted descending, at most 5 results, no cart items in output
     - **Property 6: Recommendation Grounding and Metadata Completeness** — verify every returned productId exists in the Product Graph, and name/price/imagePath/availability match skus.json
     - **Validates: Requirements 2.3, 2.4, 2.5, 2.6, 5.2, 5.3, 5.5**
@@ -176,7 +176,7 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Export the Express router
     - _Requirements: 8.2, 8.5, 8.6, 4.5, 4.6_
 
-  - [ ]* 8.3 Write property test for Firebase auth enforcement (Property 10)
+  - [x] 8.3 Write property test for Firebase auth enforcement (Property 10)
     - **Property 10: Firebase Auth Enforcement on Cart Endpoints** — verify all cart endpoints return HTTP 401 when Authorization header is absent or token is invalid; verify existing /login, /profile, /feed, /skus endpoints respond normally without Authorization header
     - **Validates: Requirements 6.1, 6.2, 6.5**
     - _Requirements: 6.1, 6.2, 6.5_
@@ -205,7 +205,7 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Export the Express router
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 14.5, 14.6, 14.7_
 
-  - [ ]* 9.4 Write property tests for registry item management and dashboard (Properties 11, 12, 13)
+  - [x] 9.4 Write property tests for registry item management and dashboard (Properties 11, 12, 13)
     - **Property 11: Registry Item Management Invariants** — verify HTTP 404 for unknown productId, HTTP 400 for invalid categoryId, HTTP 403 for uid mismatch, quantity increment on duplicate productId+categoryId
     - **Property 12: Registry Dashboard Calculation Correctness** — verify totalItems, totalValue, purchasedCount, remainingCount, purchasedValue, remainingValue, and byCategory entries are all mathematically correct for any items array
     - **Property 13: Registry Name Search Case-Insensitivity** — verify any casing variant of firstName/lastName returns the registry when isPublic:true
@@ -236,32 +236,32 @@ Backend-only Node.js/Express implementation extending `mock api/mock-api/server.
     - Configure a test runner (add `"test": "node --test tests/pbt.test.js"` to `package.json` scripts, or use Jest if preferred)
     - _Requirements: all_
 
-  - [ ]* 12.2 Write property tests for graph construction (Properties 1–4)
+  - [x] 12.2 Write property tests for graph construction (Properties 1–4)
     - **Property 1: Product Graph Node Construction Invariants** — use `fc.record` to generate arbitrary SKU-like objects; call `buildGraph([sku])`; assert Product/Brand/Material nodes and edges exist with correct field values
     - **Property 2: Array String Parser Round-Trip** — use `fc.array(fc.string())` to generate element lists; construct `"[a, b, c]"` strings; assert `parseArrayString` output matches manual split+trim
     - **Property 3: RELATED_CATEGORY Edge Weight Hierarchy** — generate pairs of SKUs with controlled shared properties; assert edge weight = 4 for collection match, 2 for productType-only
     - **Property 4: Domain Rules Edge Construction** — for each rule in domain-rules.json, generate SKU pairs matching source/target productType; assert edges exist with correct relation/context/weight
     - **Validates: Requirements 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8**
 
-  - [ ]* 12.3 Write property tests for merge algorithm and grounding (Properties 5–6)
+  - [x] 12.3 Write property tests for merge algorithm and grounding (Properties 5–6)
     - **Property 5: Recommendations Merge Algorithm Invariants** — use `fc.array` to generate graph and Pinecone candidate lists; assert no duplicates, graph score retained, sorted descending, ≤5 results, no cart items in output
     - **Property 6: Recommendation Grounding and Metadata Completeness** — assert every productId in recommendations exists in the Product Graph and metadata fields match skus.json
     - **Validates: Requirements 2.3, 2.4, 2.5, 2.6, 5.2, 5.3, 5.5**
 
-  - [ ]* 12.4 Write property tests for cart services (Properties 7–9)
+  - [x] 12.4 Write property tests for cart services (Properties 7–9)
     - **Property 7: Bundle Detection Invariants** — generate cart states with controlled collection/brand overlaps; assert collection bundles form first, registryCategory always valid, highest-priced item determines category
     - **Property 8: Availability Routing Invariants** — generate productId inputs with NLA/BACK_ORDERED/ON_HAND availability; assert correct routing and saveForLater always present in response
     - **Property 9: Cart Total Price Calculation** — generate arbitrary cart item arrays; assert totalPrice and totalItems match computed sums
     - **Validates: Requirements 3.1, 3.2, 3.4, 3.5, 4.1, 4.2, 4.4, 8.9**
 
-  - [ ]* 12.5 Write property tests for auth enforcement and registry (Properties 10–13)
+  - [x] 12.5 Write property tests for auth enforcement and registry (Properties 10–13)
     - **Property 10: Firebase Auth Enforcement on Cart Endpoints** — assert HTTP 401 for missing/invalid token on all cart endpoints; assert existing endpoints unaffected
     - **Property 11: Registry Item Management Invariants** — assert HTTP 404/400/403 for invalid inputs; assert quantity increment on duplicate productId+categoryId
     - **Property 12: Registry Dashboard Calculation Correctness** — generate arbitrary items arrays; assert all dashboard totals are mathematically correct
     - **Property 13: Registry Name Search Case-Insensitivity** — generate firstName/lastName strings; assert any casing variant returns the registry
     - **Validates: Requirements 6.1, 6.2, 6.5, 11.3, 12.2, 12.3, 12.4, 12.9, 13.1, 13.2**
 
-- [ ] 13. Final checkpoint — All tests pass
+- [x] 13. Final checkpoint — All tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 
