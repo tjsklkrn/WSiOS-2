@@ -6,13 +6,36 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1907686B2FB8475900A0D39F /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 1907686A2FB8475900A0D39F /* Algorithms */; };
+		1907686E2FB847E700A0D39F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1907686D2FB847E700A0D39F /* FirebaseAuth */; };
+		190768702FB847E700A0D39F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1907686F2FB847E700A0D39F /* FirebaseCore */; };
+		190768802FB8597800A0D39F /* GoogleService-Info-2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1907687F2FB8597800A0D39F /* GoogleService-Info-2.plist */; };
+		190768832FB859BD00A0D39F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 190768822FB859BD00A0D39F /* GoogleSignIn */; };
+		190768852FB859BD00A0D39F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 190768842FB859BD00A0D39F /* GoogleSignInSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		1907687F2FB8597800A0D39F /* GoogleService-Info-2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-2.plist"; sourceTree = "<group>"; };
 		75B248F32F7FAA4E00AD2FA7 /* WSHackathonApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WSHackathonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		190768872FB85A2F00A0D39F /* Exceptions for "WSHackathonApp" folder in "WSHackathonApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 75B248F22F7FAA4E00AD2FA7 /* WSHackathonApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		75B248F52F7FAA4E00AD2FA7 /* WSHackathonApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				190768872FB85A2F00A0D39F /* Exceptions for "WSHackathonApp" folder in "WSHackathonApp" target */,
+			);
 			path = WSHackathonApp;
 			sourceTree = "<group>";
 		};
@@ -23,6 +46,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				190768852FB859BD00A0D39F /* GoogleSignInSwift in Frameworks */,
+				1907686B2FB8475900A0D39F /* Algorithms in Frameworks */,
+				190768832FB859BD00A0D39F /* GoogleSignIn in Frameworks */,
+				190768702FB847E700A0D39F /* FirebaseCore in Frameworks */,
+				1907686E2FB847E700A0D39F /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +60,7 @@
 		75B248EA2F7FAA4E00AD2FA7 = {
 			isa = PBXGroup;
 			children = (
+				1907687F2FB8597800A0D39F /* GoogleService-Info-2.plist */,
 				75B248F52F7FAA4E00AD2FA7 /* WSHackathonApp */,
 				75B248F42F7FAA4E00AD2FA7 /* Products */,
 			);
@@ -65,6 +94,11 @@
 			);
 			name = WSHackathonApp;
 			packageProductDependencies = (
+				1907686A2FB8475900A0D39F /* Algorithms */,
+				1907686D2FB847E700A0D39F /* FirebaseAuth */,
+				1907686F2FB847E700A0D39F /* FirebaseCore */,
+				190768822FB859BD00A0D39F /* GoogleSignIn */,
+				190768842FB859BD00A0D39F /* GoogleSignInSwift */,
 			);
 			productName = WSHackathonApp;
 			productReference = 75B248F32F7FAA4E00AD2FA7 /* WSHackathonApp.app */;
@@ -95,6 +129,9 @@
 			mainGroup = 75B248EA2F7FAA4E00AD2FA7;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				190768692FB8475900A0D39F /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				1907686C2FB847E700A0D39F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				190768812FB859BD00A0D39F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 75B248F42F7FAA4E00AD2FA7 /* Products */;
@@ -111,6 +148,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				190768802FB8597800A0D39F /* GoogleService-Info-2.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +290,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WSHackathonApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -295,6 +334,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WSHackathonApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -349,6 +389,61 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		190768692FB8475900A0D39F /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		1907686C2FB847E700A0D39F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.13.0;
+			};
+		};
+		190768812FB859BD00A0D39F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1907686A2FB8475900A0D39F /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 190768692FB8475900A0D39F /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		1907686D2FB847E700A0D39F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1907686C2FB847E700A0D39F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		1907686F2FB847E700A0D39F /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1907686C2FB847E700A0D39F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		190768822FB859BD00A0D39F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 190768812FB859BD00A0D39F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		190768842FB859BD00A0D39F /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 190768812FB859BD00A0D39F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 75B248EB2F7FAA4E00AD2FA7 /* Project object */;
 }
