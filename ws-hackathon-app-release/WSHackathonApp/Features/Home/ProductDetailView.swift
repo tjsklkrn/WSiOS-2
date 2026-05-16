@@ -341,7 +341,10 @@ struct ProductDetailView: View {
                     .environmentObject(tabBarVM)
             }
             .fullScreenCover(isPresented: $showAR) {
-                ARExperienceView(initialProductName: viewModel.product.title)
+                ARExperienceView(
+                    productImageURL: viewModel.product.imageURL,
+                    productTitle: viewModel.product.title
+                )
             }
         }
         .onAppear {

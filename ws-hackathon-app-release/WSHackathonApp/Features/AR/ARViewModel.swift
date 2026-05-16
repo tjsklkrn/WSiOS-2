@@ -9,64 +9,76 @@ import ARKit
 
 @MainActor
 final class ARViewModel: ObservableObject {
-    @Published var selectedModelName: String = "plate"
     @Published var isModelPlaced: Bool = false
     @Published var isLoading: Bool = false
-    @Published var isSurfaceDetected: Bool = false
-    
-    // Available products to switch between
-    let availableProducts = [
-        ("plate", "Plate"),
-        ("bowl", "Bowl"),
-        ("mug", "Mug"),
-        ("cupset", "Cup Set")
-    ]
-    
-    // Store reference to the currently active entity to remove or change it
-    var currentEntity: ModelEntity?
-    var anchorEntity: AnchorEntity?
-    
-    nonisolated private func loadUSDZ(name: String) -> ModelEntity? {
-        try? ModelEntity.loadModel(named: name)
-    }
+    @Published var productImage: UIImage? = nil
 
-    // Safely load a model, using a fallback if the USDZ is not found in the bundle.
-    func loadModel(name: String) async -> ModelEntity {
+    var currentAnchor: AnchorEntity?
+
+    // MARK: - Image Download
+
+    func downloadProductImage(from url: URL) async {
         isLoading = true
         defer { isLoading = false }
-        
-        // Try loading synchronously (safe enough for small local USDZ in this context)
-        if let entity = loadUSDZ(name: name) {
-            entity.generateCollisionShapes(recursive: true)
-            return entity
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let image = UIImage(data: data) {
+                self.productImage = image
+            }
+        } catch {
+            print("AR: Failed to download product image: \(error)")
         }
-        
-        // Fallback: Generate a high-quality basic shape representing the crockery item
-        let fallback = createFallbackModel(for: name)
-        fallback.generateCollisionShapes(recursive: true)
-        return fallback
     }
-    
-    private func createFallbackModel(for name: String) -> ModelEntity {
-        // Luxury subtle ceramic-like material
-        var material = SimpleMaterial(color: .white, isMetallic: false)
-        material.roughness = 0.2
-        
-        let mesh: MeshResource
-        
-        switch name {
-        case "plate":
-            mesh = .generateBox(size: SIMD3<Float>(0.24, 0.015, 0.24), cornerRadius: 0.12)
-        case "bowl":
-            mesh = .generateSphere(radius: 0.08)
-        case "mug":
-            mesh = .generateBox(size: SIMD3<Float>(0.09, 0.1, 0.09), cornerRadius: 0.045)
-        case "cupset":
-            mesh = .generateBox(size: SIMD3<Float>(0.15, 0.08, 0.15), cornerRadius: 0.01)
-        default:
-            mesh = .generateBox(size: 0.1)
+
+    // MARK: - 3D Entity Creation
+
+    /// Creates a 3D box entity with the product image applied to the top face,
+    /// and a realistic material on the sides — giving a true 3D appearance.
+    func create3DProductEntity(from image: UIImage) -> ModelEntity {
+        let aspectRatio = Float(image.size.width / image.size.height)
+
+        // Real-world size: 25 cm wide, proportional depth
+        let width: Float = 0.25
+        let depth: Float = width / aspectRatio
+        let height: Float = width * 0.04  // thickness ~4% of width
+
+        // Build a box mesh
+        let mesh = MeshResource.generateBox(size: [width, height, depth])
+
+        // --- Top face material: product image ---
+        var topMaterial = UnlitMaterial()
+        if let cgImage = image.cgImage {
+            do {
+                let texture = try TextureResource.generate(from: cgImage, options: .init(semantic: .color))
+                topMaterial.color = .init(tint: .white, texture: .init(texture))
+            } catch {
+                topMaterial.color = .init(tint: .white)
+            }
         }
-        
-        return ModelEntity(mesh: mesh, materials: [material])
+
+        // --- Side/bottom material: neutral off-white like product packaging ---
+        var sideMaterial = SimpleMaterial(color: UIColor(white: 0.92, alpha: 1.0), isMetallic: false)
+        sideMaterial.roughness = 0.6
+
+        // RealityKit box has 6 faces in this order:
+        // right, left, top, bottom, front, back
+        let entity = ModelEntity(
+            mesh: mesh,
+            materials: [sideMaterial, sideMaterial, topMaterial, sideMaterial, sideMaterial, sideMaterial]
+        )
+
+        entity.generateCollisionShapes(recursive: true)
+        return entity
+    }
+
+    // MARK: - Reset
+
+    func resetPlacement(in scene: RealityKit.Scene) {
+        if let anchor = currentAnchor {
+            scene.removeAnchor(anchor)
+            currentAnchor = nil
+        }
+        isModelPlaced = false
     }
 }
