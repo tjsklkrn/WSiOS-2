@@ -20,6 +20,7 @@ struct ProductDetailView: View {
     @State private var showAddedToCartOptions = false
     @State private var showSizePicker = false
     @State private var selectedFBProduct: ProductItem? = nil
+    @State private var showAR = false
 
     init(product: ProductItem) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(product: product))
@@ -339,6 +340,9 @@ struct ProductDetailView: View {
                     .environmentObject(registryRepository)
                     .environmentObject(tabBarVM)
             }
+            .fullScreenCover(isPresented: $showAR) {
+                ARExperienceView(initialProductName: viewModel.product.title)
+            }
         }
         .onAppear {
             viewModel.bind(
@@ -352,26 +356,46 @@ struct ProductDetailView: View {
     // MARK: - Hero Image
 
     private var heroImage: some View {
-        AsyncImage(url: viewModel.product.imageURL) { phase in
-            if let image = phase.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.systemGray6))
-            } else if phase.error != nil {
-                Rectangle()
-                    .fill(Color(.systemGray5))
-                    .frame(maxWidth: .infinity, minHeight: 260)
-                    .overlay(Image(systemName: "photo").foregroundColor(.gray).font(.largeTitle))
-            } else {
-                Rectangle()
-                    .fill(Color(.systemGray5))
-                    .frame(maxWidth: .infinity, minHeight: 260)
-                    .overlay(ProgressView())
+        ZStack(alignment: .bottomTrailing) {
+            AsyncImage(url: viewModel.product.imageURL) { phase in
+                if let image = phase.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .background(Color(.systemGray6))
+                } else if phase.error != nil {
+                    Rectangle()
+                        .fill(Color(.systemGray5))
+                        .frame(maxWidth: .infinity, minHeight: 260)
+                        .overlay(Image(systemName: "photo").foregroundColor(.gray).font(.largeTitle))
+                } else {
+                    Rectangle()
+                        .fill(Color(.systemGray5))
+                        .frame(maxWidth: .infinity, minHeight: 260)
+                        .overlay(ProgressView())
+                }
             }
+            .frame(maxWidth: .infinity, minHeight: 260)
+            
+            // View in AR Button
+            Button {
+                showAR = true
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "arkit")
+                    Text("View On Your Table")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(.ultraThinMaterial, in: Capsule())
+                .foregroundColor(.primary)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+            }
+            .padding(16)
         }
-        .frame(maxWidth: .infinity, minHeight: 260)
     }
 
     private var titleRow: some View {
