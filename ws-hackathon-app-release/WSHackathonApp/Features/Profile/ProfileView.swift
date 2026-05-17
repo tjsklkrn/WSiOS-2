@@ -14,7 +14,6 @@ struct ProfileView: View {
 
     @State private var showEditProfile = false
     @State private var showOrderHistory = false
-    @State private var showTrackOrder = false
     @State private var showSignOutAlert = false
 
     private var displayName: String {
@@ -75,9 +74,6 @@ struct ProfileView: View {
                     ProfileRow(icon: "clock.arrow.circlepath", title: "Order History") {
                         showOrderHistory = true
                     }
-                    ProfileRow(icon: "shippingbox", title: "Track My Order") {
-                        showTrackOrder = true
-                    }
                 }
 
                 // MARK: - Sign Out
@@ -115,10 +111,6 @@ struct ProfileView: View {
             // Order History sheet
             .sheet(isPresented: $showOrderHistory) {
                 OrderHistoryView()
-            }
-            // Track Order sheet
-            .sheet(isPresented: $showTrackOrder) {
-                TrackOrderView()
             }
             // Sign out confirmation
             .alert("Sign Out", isPresented: $showSignOutAlert) {
@@ -356,54 +348,6 @@ private struct OrderHistoryView: View {
             }
             .onAppear {
                 orders = OrderHistoryManager.shared.getOrders()
-            }
-        }
-    }
-}
-
-private struct TrackOrderView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var trackingNumber = ""
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "shippingbox.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(.secondary)
-                    .padding(.top, 40)
-                Text("Track Your Order")
-                    .font(.title2).fontWeight(.semibold)
-                Text("Enter your order number or tracking ID to get live updates.")
-                    .font(.subheadline).foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-
-                TextField("Order / Tracking Number", text: $trackingNumber)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .padding(.horizontal, 24)
-
-                Button {
-                    // track action
-                } label: {
-                    Text("Track Order")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal, 24)
-                Spacer()
-            }
-            .navigationTitle("Track Order")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
             }
         }
     }
