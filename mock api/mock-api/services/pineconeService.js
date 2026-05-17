@@ -20,11 +20,20 @@ const { Pinecone } = require("@pinecone-database/pinecone");
 const { skusMap, parseArrayString } = require("./productGraph");
 
 // ---------------------------------------------------------------------------
-// 1. Pinecone client initialization
+// 1. Pinecone client — lazy initialization
 // ---------------------------------------------------------------------------
 
-const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
-const pineconeIndex = pc.index(process.env.PINECONE_INDEX_NAME);
+// Defer construction until first use so requiring this module during tests
+// (when PINECONE_API_KEY may be a placeholder) does not throw.
+let _pineconeIndex = null;
+
+function getPineconeIndex() {
+  if (!_pineconeIndex) {
+    const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
+    _pineconeIndex = pc.index(process.env.PINECONE_INDEX_NAME);
+  }
+  return _pineconeIndex;
+}
 
 const NAMESPACE = "ws-products";
 
@@ -85,7 +94,7 @@ async function queryForCart(cartProductIds) {
 
     let response;
     try {
-      response = await pineconeIndex.searchRecords({
+      response = await getPineconeIndex().searchRecords({
         query: { topK: 10, inputs: { text: queryText } },
         namespace: NAMESPACE,
       });

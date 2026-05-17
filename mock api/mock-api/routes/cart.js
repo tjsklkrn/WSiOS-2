@@ -27,6 +27,7 @@ const cartService = require("../services/cartService");
 const mcpOrchestrator = require("../services/mcpOrchestrator");
 const bundleDetector = require("../services/bundleDetector");
 const saveForLater = require("../services/saveForLater");
+const { recordCoPurchases } = require("../services/coPurchaseService");
 
 // ---------------------------------------------------------------------------
 // Apply firebaseAuth middleware to ALL routes on this router (Requirement 6.1)
@@ -197,6 +198,46 @@ router.post("/save-for-later/:productId/notify", async (req, res, next) => {
     if (err.status === 404 && err.code === "NOT_IN_SAVE_FOR_LATER") {
       return res.status(404).json({ error: err.message, code: "NOT_IN_SAVE_FOR_LATER" });
     }
+    next(err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// POST /cart/checkout — Simulate checkout and record co-purchases
+//
+// Call this when the user taps "Checkout". Records every product pair from
+// the active cart into Firestore so future users benefit from collaborative
+// filtering recommendations.
+//
+// Returns HTTP 200 with { success: true, itemsCheckedOut } on success.
+// Clears the active cart after recording.
+// ---------------------------------------------------------------------------
+
+router.post("/checkout", async (req, res, next) => {
+  try {
+    const cart = cartService.getCart(req.cartUserId);
+    const activeItems = cart.items;
+
+    if (activeItems.length === 0) {
+      return res.status(400).json({ error: "Cart is empty", code: "EMPTY_CART" });
+    }
+
+    // Record co-purchases to Firestore (fire-and-forget — don't block response)
+    recordCoPurchases(activeItems).catch((err) => {
+      console.error("[cart/checkout] Failed to record co-purchases:", err.message);
+    });
+
+    // Clear the cart by removing all active items
+    for (const item of activeItems) {
+      try { cartService.removeItem(req.cartUserId, item.productId); } catch (_) {}
+    }
+
+    return res.status(200).json({
+      success: true,
+      itemsCheckedOut: activeItems.length,
+      message: "Checkout recorded. Co-purchase data saved for future recommendations.",
+    });
+  } catch (err) {
     next(err);
   }
 });

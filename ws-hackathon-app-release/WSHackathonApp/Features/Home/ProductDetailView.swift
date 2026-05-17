@@ -223,6 +223,7 @@ struct ProductDetailView: View {
                             HStack(spacing: 12) {
                                 Button(action: {
                                     showAddedToCartOptions = false
+                                    dismiss()
                                 }) {
                                     Text("Continue Shopping")
                                         .font(.subheadline)
@@ -346,6 +347,9 @@ struct ProductDetailView: View {
                 cartRepository: cartRepository,
                 registryRepository: registryRepository
             )
+            Task {
+                await viewModel.fetchFrequentlyBought()
+            }
         }
     }
 

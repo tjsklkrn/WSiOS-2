@@ -26,7 +26,21 @@ struct SizeOption: Identifiable, Hashable {
 struct ColorOption: Identifiable, Hashable {
     let id: String
     let label: String
-    let hexColor: String   // e.g. "#3A9E9E"
+    let hexColor: String
+}
+
+// MARK: - Search Response (for frequently bought together)
+
+private struct SearchResponse: Decodable {
+    let results: [SearchResultItem]
+}
+
+private struct SearchResultItem: Decodable {
+    let productId: String
+    let name: String
+    let price: Double
+    let imagePath: String
+    let availability: String
 }
 
 // MARK: - ViewModel
@@ -41,7 +55,10 @@ class ProductDetailViewModel: ObservableObject {
     @Published var quantity: Int = 1
     @Published var isWishlisted: Bool = false
 
-    // Mocked options — in production these come from API
+    // Frequently bought together — loaded from /search using the product name
+    @Published private(set) var frequentlyBought: [ProductItem] = []
+
+    // Mocked size/color options
     let sizes: [SizeOption] = [
         SizeOption(id: "1", label: "1 QT."),
         SizeOption(id: "2", label: "1 3/4 QT."),
@@ -73,12 +90,6 @@ class ProductDetailViewModel: ObservableObject {
         return Double(reviews.map(\.rating).reduce(0, +)) / Double(reviews.count)
     }
 
-    let frequentlyBought: [ProductItem] = [
-        ProductItem(id: "FB-1", title: "Crockery Cleaner & Conditioner", price: 27.00, path: nil),
-        ProductItem(id: "FB-2", title: "Stainless Steel Sponge Set", price: 15.00, path: nil),
-        ProductItem(id: "FB-3", title: "Silicone Spatula", price: 12.50, path: nil)
-    ]
-
     private var wishlistRepository: WishlistRepository?
     private var cartRepository: CartRepository?
     private var registryRepository: RegistryRepository?
@@ -97,6 +108,37 @@ class ProductDetailViewModel: ObservableObject {
         self.registryRepository = registryRepository
         isWishlisted = wishlistRepository.isWishlisted(product)
     }
+
+    // MARK: - Fetch Frequently Bought Together
+
+    /// Queries the hybrid recommendation endpoint for the product's real-time co-purchased
+    /// recommendations (with semantic fallback).
+    func fetchFrequentlyBought() async {
+        let endpoint = Endpoint(
+            path: "/products/\(product.id)/frequently-bought",
+            method: .get
+        )
+        do {
+            let response: SearchResponse = try await APIClient.shared.request(endpoint)
+            // Exclude the current product, take up to 3
+            frequentlyBought = response.results
+                .filter { $0.productId != product.id }
+                .prefix(3)
+                .map { item in
+                    ProductItem(
+                        id: item.productId,
+                        title: item.name,
+                        price: item.price,
+                        path: item.imagePath
+                    )
+                }
+        } catch {
+            print("[ProductDetailViewModel] fetchFrequentlyBought error:", error)
+            frequentlyBought = []
+        }
+    }
+
+    // MARK: - Actions
 
     func toggleWishlist() {
         wishlistRepository?.toggle(product)

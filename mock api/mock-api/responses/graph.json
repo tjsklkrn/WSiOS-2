@@ -1,0 +1,1500 @@
+{
+  "nodes": [
+    {
+      "id": "prod_2505456",
+      "label": "Williams Sonoma End-Grain Cutting Board, Acacia, 15\" X 20\"",
+      "type": "Product",
+      "price": 129.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img17m.jpg"
+    },
+    {
+      "id": "prod_6121370",
+      "label": "Williams Sonoma Board Oil",
+      "type": "Product",
+      "price": 10.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img27m.jpg"
+    },
+    {
+      "id": "prod_6247040",
+      "label": "Hold Everything Lidded Ceramic Bowl, Ashwood, 12\"",
+      "type": "Product",
+      "price": 89.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img64m.jpg"
+    },
+    {
+      "id": "prod_1341411",
+      "label": "Apilco Tradition Porcelain Cup & Saucer, Each",
+      "type": "Product",
+      "price": 34.95,
+      "availability": "NLA",
+      "imagePath": "/img95m.jpg"
+    },
+    {
+      "id": "prod_2453926",
+      "label": "Staub Enameled Cast Iron Round Dutch Oven, 7-Qt., Basil",
+      "type": "Product",
+      "price": 299.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img83m.jpg"
+    },
+    {
+      "id": "prod_8381456",
+      "label": "Cuisinart PerfecTemp Programmable Coffee Maker with Glass Carafe, 14-cup",
+      "type": "Product",
+      "price": 119.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img122m.jpg"
+    },
+    {
+      "id": "prod_8227593",
+      "label": "Hold Everything Lazy Susan, Small, Walnut Finish, 10\"",
+      "type": "Product",
+      "price": 59.95,
+      "availability": "BACK_ORDERED",
+      "imagePath": "/img153m.jpg"
+    },
+    {
+      "id": "prod_5001660",
+      "label": "Williams Sonoma Organic House Extra Virgin Olive Oil",
+      "type": "Product",
+      "price": 38.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img4m.jpg"
+    },
+    {
+      "id": "prod_9670912",
+      "label": "Dorset Martini Glasses, Set of 4",
+      "type": "Product",
+      "price": 179.8,
+      "availability": "BACK_ORDERED",
+      "imagePath": "/img236m.jpg"
+    },
+    {
+      "id": "prod_181543",
+      "label": "Staub Enameled Cast Iron Traditional Deep Skillet, 8 1/2\", Citron",
+      "type": "Product",
+      "price": 180,
+      "availability": "ON_HAND",
+      "imagePath": "/img5m.jpg"
+    },
+    {
+      "id": "prod_3104592",
+      "label": "Le Creuset Round Dutch Oven, 5.5-Qt.",
+      "type": "Product",
+      "price": 419.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_le_creuset_flame.png"
+    },
+    {
+      "id": "prod_4229103",
+      "label": "All-Clad D5 Fry Pan, 10\"",
+      "type": "Product",
+      "price": 149.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_all_clad_d5.png"
+    },
+    {
+      "id": "prod_5893112",
+      "label": "WS Goldtouch Pro Cake Pan, 9\"",
+      "type": "Product",
+      "price": 32.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_ws_goldtouch.png"
+    },
+    {
+      "id": "prod_1940567",
+      "label": "Calphalon Elite 12-Piece Set",
+      "type": "Product",
+      "price": 499.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_calphalon_elite.png"
+    },
+    {
+      "id": "prod_7114096",
+      "label": "Vitamix A3500 Ascent Blender",
+      "type": "Product",
+      "price": 649.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_vitamix_ascent.png"
+    },
+    {
+      "id": "prod_8931142",
+      "label": "Breville Barista Express Impress",
+      "type": "Product",
+      "price": 899.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_breville_impress.png"
+    },
+    {
+      "id": "prod_2349015",
+      "label": "KitchenAid Artisan 5-Qt. Mixer",
+      "type": "Product",
+      "price": 449.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_kitchenaid_blue.png"
+    },
+    {
+      "id": "prod_5504192",
+      "label": "Balmuda The Toaster",
+      "type": "Product",
+      "price": 299.95,
+      "availability": "BACK_ORDERED",
+      "imagePath": "/img_balmuda_toaster.png"
+    },
+    {
+      "id": "prod_4491023",
+      "label": "Shun Classic Chef's Knife, 8\"",
+      "type": "Product",
+      "price": 169.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_shun_classic.png"
+    },
+    {
+      "id": "prod_9012455",
+      "label": "Wüsthof Classic Paring Knife",
+      "type": "Product",
+      "price": 95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_wusthof_paring.png"
+    },
+    {
+      "id": "prod_1120496",
+      "label": "WS Walnut Knife Block",
+      "type": "Product",
+      "price": 99.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_ws_walnut_block.png"
+    },
+    {
+      "id": "prod_3665120",
+      "label": "Microplane Walnut Zester",
+      "type": "Product",
+      "price": 34.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_microplane_zester.png"
+    },
+    {
+      "id": "prod_9440123",
+      "label": "Riedel Vinum Cabernet Glasses, Set of 4",
+      "type": "Product",
+      "price": 118,
+      "availability": "ON_HAND",
+      "imagePath": "/img_riedel_glasses.png"
+    },
+    {
+      "id": "prod_6771049",
+      "label": "WS Brasserie Dinner Plates",
+      "type": "Product",
+      "price": 64.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_ws_plates.png"
+    },
+    {
+      "id": "prod_1049521",
+      "label": "Hold Everything Marble Lazy Susan",
+      "type": "Product",
+      "price": 119.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_he_marble_susan.png"
+    },
+    {
+      "id": "prod_8334190",
+      "label": "Fortessa Dragon Fly Flatware Settings",
+      "type": "Product",
+      "price": 59.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_fortessa_flatware.png"
+    },
+    {
+      "id": "prod_5002991",
+      "label": "WS Aged Balsamic Vinegar",
+      "type": "Product",
+      "price": 49.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_ws_balsamic.png"
+    },
+    {
+      "id": "prod_6114220",
+      "label": "Jacobsen Kosher Sea Salt",
+      "type": "Product",
+      "price": 14.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_jacobsen_salt.png"
+    },
+    {
+      "id": "prod_2044195",
+      "label": "WS Classic Hot Chocolate",
+      "type": "Product",
+      "price": 24.95,
+      "availability": "ON_HAND",
+      "imagePath": "/img_ws_hot_chocolate.png"
+    },
+    {
+      "id": "prod_7449103",
+      "label": "Runamok Bourbon Maple Syrup",
+      "type": "Product",
+      "price": 21.95,
+      "availability": "NLA",
+      "imagePath": "/img_runamok_syrup.png"
+    },
+    {
+      "id": "brand_williams-sonoma",
+      "label": "williams-sonoma",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_hold-everything",
+      "label": "hold-everything",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_apilco",
+      "label": "apilco",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_staub-parent/staub",
+      "label": "staub-parent/staub",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_cuisinart-parent/cuisinart",
+      "label": "cuisinart-parent/cuisinart",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_le-creuset",
+      "label": "le-creuset",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_all-clad",
+      "label": "all-clad",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_calphalon",
+      "label": "calphalon",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_vitamix",
+      "label": "vitamix",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_breville",
+      "label": "breville",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_kitchenaid",
+      "label": "kitchenaid",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_balmuda",
+      "label": "balmuda",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_shun",
+      "label": "shun",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_wusthof",
+      "label": "wusthof",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_microplane",
+      "label": "microplane",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_riedel",
+      "label": "riedel",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_fortessa",
+      "label": "fortessa",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_jacobsen-salt-co",
+      "label": "jacobsen-salt-co",
+      "type": "Brand"
+    },
+    {
+      "id": "brand_runamok",
+      "label": "runamok",
+      "type": "Brand"
+    },
+    {
+      "id": "material_acacia",
+      "label": "acacia",
+      "type": "Material"
+    },
+    {
+      "id": "material_wood-parent/wood",
+      "label": "wood-parent/wood",
+      "type": "Material"
+    },
+    {
+      "id": "material_ceramic-parent/ceramic",
+      "label": "ceramic-parent/ceramic",
+      "type": "Material"
+    },
+    {
+      "id": "material_porcelain",
+      "label": "porcelain",
+      "type": "Material"
+    },
+    {
+      "id": "material_enameled-cast-iron",
+      "label": "enameled-cast-iron",
+      "type": "Material"
+    },
+    {
+      "id": "material_walnut-finish",
+      "label": "walnut-finish",
+      "type": "Material"
+    },
+    {
+      "id": "material_lead-free-crystal",
+      "label": "lead-free-crystal",
+      "type": "Material"
+    },
+    {
+      "id": "material_stainless-steel",
+      "label": "stainless-steel",
+      "type": "Material"
+    },
+    {
+      "id": "material_aluminized-steel",
+      "label": "aluminized-steel",
+      "type": "Material"
+    },
+    {
+      "id": "material_hard-anodized-aluminum",
+      "label": "hard-anodized-aluminum",
+      "type": "Material"
+    },
+    {
+      "id": "material_vg-max-steel",
+      "label": "vg-max-steel",
+      "type": "Material"
+    },
+    {
+      "id": "material_high-carbon-steel",
+      "label": "high-carbon-steel",
+      "type": "Material"
+    },
+    {
+      "id": "material_walnut",
+      "label": "walnut",
+      "type": "Material"
+    },
+    {
+      "id": "material_crystal",
+      "label": "crystal",
+      "type": "Material"
+    },
+    {
+      "id": "material_marble",
+      "label": "marble",
+      "type": "Material"
+    }
+  ],
+  "edges": [
+    {
+      "source": "prod_2505456",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_6121370",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_6247040",
+      "target": "brand_hold-everything",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_1341411",
+      "target": "brand_apilco",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_2453926",
+      "target": "brand_staub-parent/staub",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_8381456",
+      "target": "brand_cuisinart-parent/cuisinart",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_8227593",
+      "target": "brand_hold-everything",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_5001660",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_9670912",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_181543",
+      "target": "brand_staub-parent/staub",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_3104592",
+      "target": "brand_le-creuset",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_4229103",
+      "target": "brand_all-clad",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_5893112",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_1940567",
+      "target": "brand_calphalon",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_7114096",
+      "target": "brand_vitamix",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_8931142",
+      "target": "brand_breville",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_2349015",
+      "target": "brand_kitchenaid",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_5504192",
+      "target": "brand_balmuda",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_4491023",
+      "target": "brand_shun",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_9012455",
+      "target": "brand_wusthof",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_1120496",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_3665120",
+      "target": "brand_microplane",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_9440123",
+      "target": "brand_riedel",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_6771049",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_1049521",
+      "target": "brand_hold-everything",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_8334190",
+      "target": "brand_fortessa",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_5002991",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_6114220",
+      "target": "brand_jacobsen-salt-co",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_2044195",
+      "target": "brand_williams-sonoma",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_7449103",
+      "target": "brand_runamok",
+      "relation": "BRANDED_BY",
+      "weight": 0
+    },
+    {
+      "source": "prod_2505456",
+      "target": "material_acacia",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_6247040",
+      "target": "material_wood-parent/wood",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_6247040",
+      "target": "material_ceramic-parent/ceramic",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_1341411",
+      "target": "material_porcelain",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_2453926",
+      "target": "material_enameled-cast-iron",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_8227593",
+      "target": "material_walnut-finish",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_9670912",
+      "target": "material_lead-free-crystal",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_181543",
+      "target": "material_enameled-cast-iron",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_3104592",
+      "target": "material_enameled-cast-iron",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_4229103",
+      "target": "material_stainless-steel",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_5893112",
+      "target": "material_aluminized-steel",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_1940567",
+      "target": "material_hard-anodized-aluminum",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_4491023",
+      "target": "material_vg-max-steel",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_9012455",
+      "target": "material_high-carbon-steel",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_1120496",
+      "target": "material_walnut",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_3665120",
+      "target": "material_walnut-finish",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_9440123",
+      "target": "material_crystal",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_6771049",
+      "target": "material_porcelain",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_1049521",
+      "target": "material_marble",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_8334190",
+      "target": "material_stainless-steel",
+      "relation": "MADE_OF",
+      "weight": 0
+    },
+    {
+      "source": "prod_2453926",
+      "target": "prod_181543",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "staub-cast-iron"
+    },
+    {
+      "source": "prod_181543",
+      "target": "prod_2453926",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "staub-cast-iron"
+    },
+    {
+      "source": "prod_8227593",
+      "target": "prod_1049521",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "he-countertop"
+    },
+    {
+      "source": "prod_1049521",
+      "target": "prod_8227593",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "he-countertop"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_2505456",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_6121370",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_5001660",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_9670912",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_9670912",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5893112",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_5893112",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_1120496",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_1120496",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_5002991",
+      "target": "prod_2044195",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_2044195",
+      "target": "prod_5002991",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "williams-sonoma"
+    },
+    {
+      "source": "prod_6247040",
+      "target": "prod_8227593",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "hold-everything"
+    },
+    {
+      "source": "prod_8227593",
+      "target": "prod_6247040",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "hold-everything"
+    },
+    {
+      "source": "prod_6247040",
+      "target": "prod_1049521",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "hold-everything"
+    },
+    {
+      "source": "prod_1049521",
+      "target": "prod_6247040",
+      "relation": "RELATED_CATEGORY",
+      "weight": 3,
+      "context": "hold-everything"
+    },
+    {
+      "source": "prod_2453926",
+      "target": "prod_3104592",
+      "relation": "RELATED_CATEGORY",
+      "weight": 2,
+      "context": "dutch-ovens"
+    },
+    {
+      "source": "prod_3104592",
+      "target": "prod_2453926",
+      "relation": "RELATED_CATEGORY",
+      "weight": 2,
+      "context": "dutch-ovens"
+    },
+    {
+      "source": "prod_181543",
+      "target": "prod_4229103",
+      "relation": "RELATED_CATEGORY",
+      "weight": 2,
+      "context": "fry-pans-skillets"
+    },
+    {
+      "source": "prod_4229103",
+      "target": "prod_181543",
+      "relation": "RELATED_CATEGORY",
+      "weight": 2,
+      "context": "fry-pans-skillets"
+    },
+    {
+      "source": "prod_1341411",
+      "target": "prod_6771049",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "porcelain"
+    },
+    {
+      "source": "prod_6771049",
+      "target": "prod_1341411",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "porcelain"
+    },
+    {
+      "source": "prod_181543",
+      "target": "prod_3104592",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "enameled-cast-iron"
+    },
+    {
+      "source": "prod_3104592",
+      "target": "prod_181543",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "enameled-cast-iron"
+    },
+    {
+      "source": "prod_8227593",
+      "target": "prod_3665120",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "walnut-finish"
+    },
+    {
+      "source": "prod_3665120",
+      "target": "prod_8227593",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "walnut-finish"
+    },
+    {
+      "source": "prod_4229103",
+      "target": "prod_8334190",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "stainless-steel"
+    },
+    {
+      "source": "prod_8334190",
+      "target": "prod_4229103",
+      "relation": "RELATED_CATEGORY",
+      "weight": 1,
+      "context": "stainless-steel"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_6121370",
+      "relation": "MAINTAINED_BY",
+      "weight": 3,
+      "context": "Product Care Duo"
+    },
+    {
+      "source": "prod_6121370",
+      "target": "prod_2505456",
+      "relation": "MAINTAINED_BY",
+      "weight": 3,
+      "context": "Product Care Duo"
+    },
+    {
+      "source": "prod_2453926",
+      "target": "prod_4229103",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "Premium Cookware Set"
+    },
+    {
+      "source": "prod_4229103",
+      "target": "prod_2453926",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "Premium Cookware Set"
+    },
+    {
+      "source": "prod_3104592",
+      "target": "prod_4229103",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "Premium Cookware Set"
+    },
+    {
+      "source": "prod_4229103",
+      "target": "prod_3104592",
+      "relation": "RELATED_CATEGORY",
+      "weight": 4,
+      "context": "Premium Cookware Set"
+    },
+    {
+      "source": "prod_8381456",
+      "target": "prod_1341411",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Coffee & Tea Station"
+    },
+    {
+      "source": "prod_1341411",
+      "target": "prod_8381456",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Coffee & Tea Station"
+    },
+    {
+      "source": "prod_2453926",
+      "target": "prod_2505456",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cookware Prep Essentials"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_2453926",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cookware Prep Essentials"
+    },
+    {
+      "source": "prod_3104592",
+      "target": "prod_2505456",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cookware Prep Essentials"
+    },
+    {
+      "source": "prod_2505456",
+      "target": "prod_3104592",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cookware Prep Essentials"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_2453926",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_2453926",
+      "target": "prod_5001660",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_3104592",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_3104592",
+      "target": "prod_5001660",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_181543",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_181543",
+      "target": "prod_5001660",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_5001660",
+      "target": "prod_4229103",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    },
+    {
+      "source": "prod_4229103",
+      "target": "prod_5001660",
+      "relation": "COMPLEMENTARY_USAGE",
+      "weight": 2,
+      "context": "Cooking Essentials"
+    }
+  ]
+}

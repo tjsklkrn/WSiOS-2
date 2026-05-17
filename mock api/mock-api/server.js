@@ -57,11 +57,16 @@ app.get("/skus", (req, res) => {
   return delayedJson(res, "skus.json", 200, 700);
 });
 
+app.get("/graph", (req, res) => {
+  res.json(readJson("graph.json"));
+});
+
 
 // Mount new feature routes
 app.use("/cart", require("./routes/cart"));
 app.use("/registry", require("./routes/registry"));
 app.use("/search", require("./routes/search"));
+app.use("/products", require("./routes/products"));
 
 // Centralized error handler (must be last app.use)
 app.use((err, req, res, next) => {
@@ -77,5 +82,5 @@ buildGraph();
 
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Mock API running on http://0.0.0.0:${PORT}`);
+  console.log(`Mock API running on http://10.21.117.190:${PORT}`);
 });

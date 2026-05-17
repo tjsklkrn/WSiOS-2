@@ -45,6 +45,7 @@ struct ProductCardView: View {
             }
             .buttonStyle(.plain)
 
+            // MARK: - Wishlist Button
             Button(action: onToggleWishlist) {
                 Image(systemName: isWishlisted ? "heart.fill" : "heart")
                     .font(.system(size: 14, weight: .medium))
@@ -64,7 +65,7 @@ struct ProductCardView: View {
         )
     }
 
-    // MARK: - Product Image
+
     @ViewBuilder
     private var productImage: some View {
         AsyncImage(url: product.imageURL) { phase in
@@ -73,19 +74,24 @@ struct ProductCardView: View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(width: .infinity, height: 160)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 160)
                     .clipped()
+
             case .failure:
                 imagePlaceholder
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 160)
+
             default:
                 ZStack {
                     Color(.systemGray5)
                     ProgressView()
                 }
+                .frame(maxWidth: .infinity)
+                .frame(height: 160)
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160)
-        .clipped()
         .cornerRadius(16, corners: [.topLeft, .topRight])
     }
 
@@ -120,3 +126,4 @@ private struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+

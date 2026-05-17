@@ -3,22 +3,78 @@
     {
       "sourceProductType": "cutting-boards-storage",
       "targetProductType": "cutting-board-oil",
-      "relation": "MAINTAINED_BY",
+      "relation": "FREQUENTLY_BOUGHT_TOGETHER",
       "context": "Product Care Duo",
-      "weight": 3
-    },
-    {
-      "sourceProductType": "dutch-ovens",
-      "targetProductType": "fry-pans-skillets",
-      "relation": "RELATED_CATEGORY",
-      "context": "Premium Cookware Set",
-      "weight": 4
+      "weight": 5
     },
     {
       "sourceProductType": "coffee-maker",
       "targetProductType": "cups-and-saucers",
-      "relation": "COMPLEMENTARY_USAGE",
+      "relation": "FREQUENTLY_BOUGHT_TOGETHER",
       "context": "Coffee & Tea Station",
+      "weight": 5
+    },
+    {
+      "sourceProductType": "espresso-maker",
+      "targetProductType": "cups-and-saucers",
+      "relation": "FREQUENTLY_BOUGHT_TOGETHER",
+      "context": "Espresso & Coffee Station",
+      "weight": 5
+    },
+    {
+      "sourceProductType": "chefs-knives",
+      "targetProductType": "knife-storage",
+      "relation": "FREQUENTLY_BOUGHT_TOGETHER",
+      "context": "Knife Care Set",
+      "weight": 5
+    },
+    {
+      "sourceProductType": "paring-knives",
+      "targetProductType": "knife-storage",
+      "relation": "FREQUENTLY_BOUGHT_TOGETHER",
+      "context": "Knife Care Set",
+      "weight": 5
+    },
+    {
+      "sourceProductType": "dutch-ovens",
+      "targetProductType": "fry-pans-skillets",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Premium Cookware Set",
+      "weight": 4
+    },
+    {
+      "sourceProductType": "cutting-boards-storage",
+      "targetProductType": "chefs-knives",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Prep Station Essentials",
+      "weight": 3
+    },
+    {
+      "sourceProductType": "cutting-boards-storage",
+      "targetProductType": "paring-knives",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Prep Station Essentials",
+      "weight": 3
+    },
+    {
+      "sourceProductType": "stand-mixers",
+      "targetProductType": "cake-pans",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Baking Essentials",
+      "weight": 3
+    },
+    {
+      "sourceProductType": "coffee-maker",
+      "targetProductType": "beverages",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Morning Ritual",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "espresso-maker",
+      "targetProductType": "beverages",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Morning Ritual",
       "weight": 2
     },
     {
@@ -40,6 +96,34 @@
       "targetProductType": "fry-pans-skillets",
       "relation": "COMPLEMENTARY_USAGE",
       "context": "Cooking Essentials",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "vinegar",
+      "targetProductType": "dinner-plates",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Table Setting",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "wine-glasses",
+      "targetProductType": "dinner-plates",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Entertaining Set",
+      "weight": 2
+    },
+    {
+      "sourceProductType": "flatware-sets",
+      "targetProductType": "dinner-plates",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Complete Table Setting",
+      "weight": 3
+    },
+    {
+      "sourceProductType": "blenders",
+      "targetProductType": "oil",
+      "relation": "COMPLEMENTARY_USAGE",
+      "context": "Healthy Kitchen",
       "weight": 2
     }
   ]
