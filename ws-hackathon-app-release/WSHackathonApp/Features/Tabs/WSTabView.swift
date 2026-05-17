@@ -26,6 +26,7 @@ struct WSTabView: View {
                     .badge(tab == .cart ? (viewModel.cartItemCount > 0 ? viewModel.cartItemCount : 0) : 0)
             }
         }
+        .tint(Color(hex: "#C11F1F"))
     }
 
     @ViewBuilder
