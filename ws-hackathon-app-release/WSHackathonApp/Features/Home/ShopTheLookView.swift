@@ -149,72 +149,33 @@ struct ShopTheLookView: View {
         }
     }
 
-    // MARK: - Header Nav Bar with Integrated Look Selector
+    // MARK: - Header Nav Bar
 
     private var headerNavBar: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.black)
-                        .contentShape(Rectangle())
-                }
-
-                Spacer()
-
-                Text("Shop the Look")
-                    .font(.system(size: 17, weight: .bold))
+        HStack {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.black)
-                    .tracking(0.5)
-
-                Spacer()
-
-                Spacer().frame(width: 24) // Balance back button
+                    .contentShape(Rectangle())
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
 
-            // Premium Segment Selector
-            HStack(spacing: 0) {
-                Button(action: {
-                    withAnimation {
-                        selectedLook = .kitchen
-                    }
-                }) {
-                    VStack(spacing: 6) {
-                        Text("EXPLORE KITCHEN")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(selectedLook == .kitchen ? .black : Color(.systemGray))
+            Spacer()
 
-                        Rectangle()
-                            .fill(selectedLook == .kitchen ? Color(hex: "#C11F1F") : Color.clear)
-                            .frame(height: 2)
-                    }
-                }
-                .frame(maxWidth: .infinity)
+            Text("Shop the Look")
+                .font(.system(size: 17, weight: .bold))
+                .foregroundColor(.black)
+                .tracking(0.5)
 
-                Button(action: {
-                    withAnimation {
-                        selectedLook = .dining
-                    }
-                }) {
-                    VStack(spacing: 6) {
-                        Text("EXPLORE DINING")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(selectedLook == .dining ? .black : Color(.systemGray))
+            Spacer()
 
-                        Rectangle()
-                            .fill(selectedLook == .dining ? Color(hex: "#C11F1F") : Color.clear)
-                            .frame(height: 2)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal, 16)
+            Spacer().frame(width: 24)
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 12)
         .background(Color.white)
         .overlay(
             Rectangle()
