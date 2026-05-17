@@ -12,4 +12,8 @@ struct RegistryItem: Identifiable {
     let price: Double
     let imageUrl: String?
     var quantity: Int
+    var purchasedQuantity: Int = 0
+    var isGroupGift: Bool = false
+    var contributedAmount: Double = 0.0
+    var addedByUserId: String = ""  // tracks who added this item
 }

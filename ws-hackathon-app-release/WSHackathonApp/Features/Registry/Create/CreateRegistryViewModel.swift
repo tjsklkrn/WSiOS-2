@@ -14,8 +14,13 @@ final class CreateRegistryViewModel: ObservableObject {
     @Published var lastName: String = ""
     @Published var selectedEvent: RegistryEvent = .birthday
     @Published var date: Date = Date()
+    @Published var visibility: RegistryVisibility = .public
+    @Published var password: String = ""
     
     var isValid: Bool {
-        !firstName.isEmpty && !lastName.isEmpty
+        if visibility == .protected && password.isEmpty {
+            return false
+        }
+        return !firstName.isEmpty && !lastName.isEmpty
     }
 }

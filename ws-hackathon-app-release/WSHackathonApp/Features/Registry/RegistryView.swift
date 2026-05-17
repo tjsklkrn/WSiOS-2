@@ -10,70 +10,64 @@ import SwiftUI
 enum RegistryRoute: Hashable {
     case create
     case success
+    case find
+    case category(String)
+    case manage
+    case registryDetail(UUID)
 }
 
 struct RegistryView: View {
-    
+
     @StateObject private var viewModel = RegistryViewModel()
-    
+
     @EnvironmentObject var registryRepo: RegistryRepository
     @EnvironmentObject var cartRepo: CartRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
-    
+
     var body: some View {
         NavigationStack(path: $tabBarVM.registryPath) {
-            
             ZStack {
-                Color(.systemGray6)
-                    .ignoresSafeArea()
-                
-                ScrollView {
+                Color.white.ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        
-                        // MARK: - Header Image
+
+                        // MARK: - Hero Image
                         GeometryReader { geometry in
                             Image(AppImages.Registry.header)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: geometry.size.width, height: 200)
+                                .frame(width: geometry.size.width, height: 240)
                                 .clipped()
+                                .overlay(
+                                    // Dark gradient at bottom for text legibility
+                                    LinearGradient(
+                                        colors: [.clear, .black.opacity(0.4)],
+                                        startPoint: .center,
+                                        endPoint: .bottom
+                                    )
+                                )
                         }
-                        .frame(height: 200)
-                        
+                        .frame(height: 240)
+
                         // MARK: - Content
-                        VStack(spacing: 16) {
-                            
-                            if viewModel.hasRegistry {
-                                
-                                registryHeader
-                                
-                                if viewModel.hasItems {
-                                    registryItemsList
-                                } else {
-                                    emptyItemsView
-                                }
-                                
-                            } else {
-                                registryCard
-                                instructionCard
-                            }
+                        VStack(spacing: 0) {
+
+                            noRegistryContent
                         }
-                        .padding(.top, 16)
                     }
                 }
             }
             .navigationTitle(AppStrings.Registry.title)
             .navigationBarTitleDisplayMode(.inline)
-            
-            // MARK: - Navigation
-            
             .navigationDestination(for: RegistryRoute.self) { route in
                 switch route {
-                case .create:
-                    CreateRegistryView()
-                    
-                case .success:
-                    RegistrySuccessView()
+                case .create: CreateRegistryView()
+                case .success: RegistrySuccessView()
+                case .find: FindRegistryView()
+                case .category(let name): CategoryProductsView(category: name)
+                case .manage: ManageRegistryView()
+                case .registryDetail(let id): RegistryDetailView(registryId: id)
                 }
             }
         }
@@ -85,223 +79,227 @@ struct RegistryView: View {
 
 // MARK: - Components
 private extension RegistryView {
-    
-    var registryCard: some View {
 
-        VStack(spacing: 12) {
+    var noRegistryContent: some View {
+        VStack(spacing: 0) {
 
-            // 1. CREATE A REGISTRY  (primary)
-            Button {
-                tabBarVM.registryPath.append(.create)
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 22))
-                        .foregroundColor(.black)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(AppStrings.Registry.create)
-                            .font(.headline)
-                            .foregroundColor(.black)
-                        Text("Start adding gifts for your event")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: AppImages.Registry.chevron)
-                        .foregroundColor(.gray)
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .cornerRadius(12)
+            // Section header
+            VStack(spacing: 6) {
+                Text("YOUR REGISTRY")
+                    .font(.system(size: 10, weight: .medium))
+                    .tracking(1.5)
+                    .foregroundColor(Color(white: 0.5))
+                    .padding(.top, 28)
+
+                Text("Celebrate Every Occasion")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(.black)
+
+                Text("Create a registry for your wedding, baby shower,\nhousewarming, or any special event.")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color(white: 0.45))
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 6)
+                    .padding(.horizontal, 32)
             }
-            .buttonStyle(.plain)
+            .padding(.bottom, 28)
 
-            // 2. FIND A REGISTRY  (secondary)
-            Button {
-                // Navigate to registry search (future feature)
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass.circle")
-                        .font(.system(size: 22))
-                        .foregroundColor(.black)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Find a Registry")
-                            .font(.headline)
-                            .foregroundColor(.black)
-                        Text("Search for a friend or family registry")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+            // Divider
+            Rectangle()
+                .fill(Color(white: 0.88))
+                .frame(height: 1)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
+
+            // Action Buttons
+            VStack(spacing: 0) {
+                // Create Registry
+                Button {
+                    tabBarVM.registryPath.append(.create)
+                } label: {
+                    HStack(spacing: 0) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("CREATE A REGISTRY")
+                                .font(.system(size: 11, weight: .medium))
+                                .tracking(1.2)
+                                .foregroundColor(.black)
+                            Text("Start adding gifts for your event")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(white: 0.5))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color(white: 0.5))
                     }
-                    Spacer()
-                    Image(systemName: AppImages.Registry.chevron)
-                        .foregroundColor(.gray)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 18)
+                    .background(Color.white)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .cornerRadius(12)
-            }
-            .buttonStyle(.plain)
+                .buttonStyle(.plain)
 
-            // 3. REGISTRY FAVOURITES BY CATEGORY
-            registryFavouritesByCategory
+                // Divider between buttons
+                Rectangle()
+                    .fill(Color(white: 0.88))
+                    .frame(height: 1)
+
+                // Find Registry
+                Button {
+                    tabBarVM.registryPath.append(.find)
+                } label: {
+                    HStack(spacing: 0) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("FIND A REGISTRY")
+                                .font(.system(size: 11, weight: .medium))
+                                .tracking(1.2)
+                                .foregroundColor(.black)
+                            Text("Search for a friend or family registry")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(white: 0.5))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color(white: 0.5))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 18)
+                    .background(Color.white)
+                }
+                .buttonStyle(.plain)
+
+                // Divider between buttons
+                Rectangle()
+                    .fill(Color(white: 0.88))
+                    .frame(height: 1)
+
+                // Manage Registry
+                Button {
+                    tabBarVM.registryPath.append(.manage)
+                } label: {
+                    HStack(spacing: 0) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("MANAGE YOUR REGISTRY")
+                                .font(.system(size: 11, weight: .medium))
+                                .tracking(1.2)
+                                .foregroundColor(.black)
+                            Text("Update settings and track gifts")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(white: 0.5))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color(white: 0.5))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 18)
+                    .background(Color.white)
+                }
+                .buttonStyle(.plain)
+            }
+            .overlay(Rectangle().stroke(Color(white: 0.88), lineWidth: 1))
+            .padding(.horizontal, 16)
+
+            // MARK: - Registry Categories
+            VStack(alignment: .leading, spacing: 0) {
+                Rectangle()
+                    .fill(Color(white: 0.88))
+                    .frame(height: 1)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 32)
+                    .padding(.bottom, 20)
+
+                Text("Registry Favourites by Category")
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+
+                let columns = [GridItem(.flexible(), spacing: 2), GridItem(.flexible(), spacing: 2)]
+                LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(RegistryView.registryCategories, id: \.title) { category in
+                        Button {
+                            tabBarVM.registryPath.append(.category(category.title))
+                        } label: {
+                            VStack(spacing: 10) {
+                                Image(systemName: category.icon)
+                                    .font(.system(size: 24, weight: .light))
+                                    .foregroundColor(.black)
+                                    .frame(height: 28)
+                                Text(category.title)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.black)
+                                    .tracking(0.3)
+                                Text(category.subtitle)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Color(white: 0.5))
+                                    .multilineTextAlignment(.center)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 20)
+                            .padding(.horizontal, 8)
+                            .background(Color(white: 0.97))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+
+            // MARK: - Why Register
+            VStack(alignment: .leading, spacing: 0) {
+                Rectangle()
+                    .fill(Color(white: 0.88))
+                    .frame(height: 1)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 32)
+                    .padding(.bottom, 20)
+
+                Text(AppStrings.Registry.topReasons)
+                    .font(.system(size: 10, weight: .medium))
+                    .tracking(1.5)
+                    .foregroundColor(Color(white: 0.5))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(viewModel.instructions.enumerated()), id: \.element.id) { index, item in
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(item.title)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(.black)
+                            Text(item.description)
+                                .font(.system(size: 12))
+                                .foregroundColor(Color(white: 0.45))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .background(Color.white)
+
+                        if index < viewModel.instructions.count - 1 {
+                            Rectangle()
+                                .fill(Color(white: 0.9))
+                                .frame(height: 1)
+                                .padding(.horizontal, 20)
+                        }
+                    }
+                }
+                .overlay(Rectangle().stroke(Color(white: 0.88), lineWidth: 1))
+                .padding(.horizontal, 16)
+                .padding(.bottom, 40)
+            }
         }
-        .padding(.horizontal, 16)
     }
-
-    // MARK: - Registry Favourites by Category
 
     private static let registryCategories: [(icon: String, title: String, subtitle: String)] = [
-        ("frying.pan",      "Cookware",    "Pots, pans & sets"),
-        ("fork.knife",      "Dinnerware",  "Plates, bowls & mugs"),
-        ("wineglass",       "Bar & Wine",  "Glasses & decanters"),
+        ("frying.pan",      "Cookware",         "Pots, pans & sets"),
+        ("fork.knife",      "Dinnerware",       "Plates, bowls & mugs"),
+        ("wineglass",       "Bar & Wine",       "Glasses & decanters"),
         ("refrigerator",    "Small Appliances", "Blenders, espresso & more"),
-        ("tablecells",      "Cutlery",     "Knives & knife sets"),
-        ("cabinet",         "Storage",     "Canisters & organisation")
+        ("tablecells",      "Cutlery",          "Knives & knife sets"),
+        ("cabinet",         "Storage",          "Canisters & organisation")
     ]
 
-    var registryFavouritesByCategory: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Registry Favourites by Category")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .padding(.horizontal, 4)
-
-            let columns = [GridItem(.flexible()), GridItem(.flexible())]
-            LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(RegistryView.registryCategories, id: \.title) { category in
-                    Button {
-                        // Navigate to category (future feature)
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: category.icon)
-                                .font(.system(size: 26))
-                                .foregroundColor(.black)
-                                .frame(height: 32)
-                            Text(category.title)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .multilineTextAlignment(.center)
-                            Text(category.subtitle)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .padding(.horizontal, 8)
-                        .background(Color.white)
-                        .cornerRadius(12)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .padding(.horizontal, 0)
-    }
-
-
-    var createRegistryButton: some View {
-        HStack(spacing: 12) {
-            Image(systemName: AppImages.Registry.plus)
-                .foregroundColor(.black)
-            Text(AppStrings.Registry.create)
-                .font(.headline)
-                .foregroundColor(.black)
-            Spacer()
-            Image(systemName: AppImages.Registry.chevron)
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-    }
-    
-    var instructionCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            
-            Text(AppStrings.Registry.topReasons)
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(Array(viewModel.instructions.enumerated()), id: \.element.id) { index, item in
-                    instructionRow(
-                        title: item.title,
-                        description: item.description
-                    )
-                    if index != viewModel.instructions.count - 1 {
-                        Divider()
-                    }
-                }
-            }
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
-        .padding(.horizontal, 16)
-    }
-    
-    func instructionRow(title: String, description: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            
-            Text(title)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
-            
-            Text(description)
-                .font(.footnote)
-                .foregroundColor(.gray)
-        }
-    }
-    
-    var emptyItemsView: some View {
-        Text(AppStrings.Registry.noItemsAdded)
-            .foregroundColor(.gray)
-            .padding()
-    }
-    
-    var registryItemsList: some View {
-        VStack(spacing: 12) {
-            ForEach(viewModel.items) { item in
-                RegistryItemRow(
-                    viewModel: RegistryItemRowViewModel(
-                        item: item,
-                        registryRepo: registryRepo,
-                        cartRepo: cartRepo,
-                        tabbarVM: tabBarVM
-                    )
-                )
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-    
-    var registryHeader: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            
-            Text(viewModel.displayTitle)
-                .font(.headline)
-            
-            Text(viewModel.displayDate)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            
-            Button("Delete Registry") {
-                viewModel.deleteRegistry(using: registryRepo)
-            }
-            .font(.caption)
-            .foregroundColor(.red)
-            .padding(.top, 4)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(12)
-        .padding(.horizontal, 16)
-    }
 }
-

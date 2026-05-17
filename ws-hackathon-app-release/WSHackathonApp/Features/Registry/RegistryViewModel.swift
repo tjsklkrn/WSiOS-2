@@ -19,7 +19,10 @@ final class RegistryViewModel: ObservableObject {
     // MARK: - Bind Repository
     
     func bind(repository: RegistryRepository) {
-        repository.$currentRegistry
+        Publishers.CombineLatest(repository.$registries, repository.$currentRegistryId)
+            .map { registries, id in
+                registries.first { $0.id == id }
+            }
             .receive(on: RunLoop.main)
             .assign(to: &$registry)
     }
@@ -72,7 +75,7 @@ final class RegistryViewModel: ObservableObject {
     
     // MARK: - Actions
     
-    func deleteRegistry(using repository: RegistryRepository) {
-        repository.deleteRegistry()
+    func deleteRegistry(id: UUID, using repository: RegistryRepository) {
+        repository.deleteRegistry(id: id)
     }
 }
