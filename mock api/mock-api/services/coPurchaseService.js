@@ -63,6 +63,7 @@ async function recordCoPurchases(cartItems) {
   const ids = cartItems.map((i) => i.productId).filter(Boolean);
   if (ids.length < 2) return;
 
+  const db = getDb();
   const batch = db.batch();
   const now   = new Date().toISOString();
 
@@ -111,6 +112,7 @@ async function getCoPurchaseCandidates(cartProductIds) {
 
   if (!ids || ids.length === 0) return [];
 
+  const db = getDb();
   const results = [];
   const seen    = new Set(); // dedup across multiple cart products
 

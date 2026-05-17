@@ -7,6 +7,7 @@ import SwiftUI
 
 struct CartView: View {
     @StateObject private var viewModel = CartViewModel()
+    @State private var isShowingCheckout = false
     @EnvironmentObject var cartRepository: CartRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
 
@@ -18,10 +19,7 @@ struct CartView: View {
                 if viewModel.isLoading && viewModel.items.isEmpty {
                     ProgressView()
                 } else if viewModel.isEmptyCart {
-                    VStack {
-                        EmptyCartView { tabBarVM.selectTab(.home) }
-                        Spacer()
-                    }
+                    EmptyCartView { tabBarVM.selectTab(.home) }
                 } else {                    VStack(spacing: 0) {
                         ScrollView {
                             VStack(spacing: 20) {
@@ -62,6 +60,10 @@ struct CartView: View {
         }
         .onAppear {
             viewModel.bind(repository: cartRepository)
+        }
+        .fullScreenCover(isPresented: $isShowingCheckout) {
+            CheckoutView(cartViewModel: viewModel, cartRepository: cartRepository)
+                .environmentObject(tabBarVM)
         }
     }
 
@@ -162,31 +164,75 @@ struct CartView: View {
 
     private var checkoutBar: some View {
         VStack(spacing: 12) {
-            HStack {
-                Text(AppStrings.Cart.total)
-                    .font(.headline)
-                Spacer()
-                Text(viewModel.totalPriceText)
-                    .font(.headline)
-                    .fontWeight(.bold)
+            VStack(alignment: .leading, spacing: 6) {
+                let totalItems = viewModel.items.reduce(0) { $0 + $1.quantity }
+                
+                HStack {
+                    Text("Order Summary (\(totalItems) \(totalItems == 1 ? "item" : "items"))")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+                .padding(.bottom, 2)
+                
+                // Show up to 3 items, then a summary indicator
+                let displayedItems = Array(viewModel.items.prefix(3))
+                ForEach(displayedItems) { item in
+                    HStack {
+                        Text("\(item.quantity)x \(item.title)")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.black)
+                            .lineLimit(1)
+                        Spacer()
+                        Text("$\(item.price * Double(item.quantity), specifier: "%.2f")")
+                            .font(.system(size: 12))
+                            .foregroundColor(.black)
+                    }
+                }
+                
+                if viewModel.items.count > 3 {
+                    Text("+ \(viewModel.items.count - 3) more items")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.black)
+                        .padding(.top, 2)
+                }
+                
+                Divider()
+                    .padding(.vertical, 4)
+                
+                HStack {
+                    Text(AppStrings.Cart.total)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                    Spacer()
+                    Text(viewModel.totalPriceText)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.black)
+                }
             }
+            .padding(.bottom, 4)
 
             Button(action: {
-                viewModel.checkout()
+                isShowingCheckout = true
             }) {
                 Text(AppStrings.Cart.checkoutButton)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 14, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.black)
+                    .background(Color(hex: "#C11F1F")) // Williams-Sonoma Signature Crimson Red
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(4) // Flat rectangular CTA style
             }
         }
-        .padding()
+        .padding(14)
         .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color(.systemGray4), radius: 4, x: 0, y: -2)
+        .cornerRadius(4)
+        .overlay(
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(Color(.systemGray4), lineWidth: 0.7) // Crisp structural border
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, 32)
     }
 }
 
@@ -289,43 +335,55 @@ private struct RecommendationCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
+            // Elegant scaled-to-fit container that shows the complete product shape without cropping
             AsyncImage(url: item.imageURL) { phase in
                 switch phase {
                 case .success(let img):
-                    img.resizable().scaledToFill()
-                        .frame(width: 130, height: 110)
-                        .clipped()
+                    img.resizable().scaledToFit()
+                        .frame(width: 120, height: 100)
+                        .padding(6)
                 default:
                     Color(.systemGray5)
-                        .frame(width: 130, height: 110)
+                        .frame(width: 130, height: 112)
                 }
             }
-            .frame(width: 130, height: 110)
+            .frame(width: 140, height: 112)
+            .background(Color.white)
             .cornerRadius(10)
             .clipped()
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black.opacity(0.05), lineWidth: 0.5)
+            )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.name)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.black)
                     .lineLimit(2)
-                    .frame(width: 130, alignment: .leading)
+                    .frame(width: 124, alignment: .leading)
 
                 Text(item.price.formatted(.currency(code: "USD")))
                     .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.black)
 
                 if let context = item.context, !context.isEmpty {
-                    Text(context)
+                    Text(context.capitalized)
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 8)
             .padding(.bottom, 8)
         }
-        .frame(width: 130)
+        .frame(width: 140)
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: Color(.systemGray4), radius: 3, x: 0, y: 1)
+        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.black.opacity(0.04), lineWidth: 0.5)
+        )
     }
 }

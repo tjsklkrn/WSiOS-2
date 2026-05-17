@@ -267,7 +267,7 @@ struct ProductDetailView: View {
                                     .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity)
                                     .padding(14)
-                                    .background(Color.black)
+                                    .background(Color(hex: "#C11F1F"))
                                     .foregroundColor(.white)
                                     .cornerRadius(4)
                             }
