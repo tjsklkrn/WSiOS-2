@@ -7,6 +7,10 @@ import SwiftUI
 
 struct ProfileView: View {
 
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var profileRepo: ProfileRepository
+    @EnvironmentObject var authVM: AuthViewModel
+
     @State private var showEditProfile = false
     @State private var showOrderHistory = false
     @State private var showTrackOrder = false
@@ -23,9 +27,9 @@ struct ProfileView: View {
                             .font(.system(size: 52))
                             .foregroundColor(.secondary)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Guest User")
+                            Text(profileRepo.currentProfile?.fullName ?? "User")
                                 .font(.headline)
-                            Text("guest@example.com")
+                            Text(profileRepo.currentProfile?.phoneNumber ?? "")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -63,9 +67,20 @@ struct ProfileView: View {
             .listStyle(.insetGrouped)
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(Color(.tertiaryLabel))
+                    }
+                }
+            }
             // Edit Profile sheet
             .sheet(isPresented: $showEditProfile) {
                 EditProfileView()
+                    .environmentObject(profileRepo)
+                    .environmentObject(authVM)
             }
             // Order History sheet
             .sheet(isPresented: $showOrderHistory) {
@@ -77,7 +92,7 @@ struct ProfileView: View {
             }
             // Sign out confirmation
             .alert("Sign Out", isPresented: $showSignOutAlert) {
-                Button("Sign Out", role: .destructive) { /* sign out logic */ }
+                Button("Sign Out", role: .destructive) { authVM.signOut() }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Are you sure you want to sign out?")
@@ -114,8 +129,11 @@ private struct ProfileRow: View {
 
 private struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var name = "Guest User"
-    @State private var email = "guest@example.com"
+    @EnvironmentObject var profileRepo: ProfileRepository
+    @EnvironmentObject var authVM: AuthViewModel
+
+    @State private var name = ""
+    @State private var email = ""
     @State private var phone = ""
 
     var body: some View {
@@ -136,6 +154,7 @@ private struct EditProfileView: View {
                             .multilineTextAlignment(.trailing)
                             .foregroundColor(.secondary)
                             .keyboardType(.emailAddress)
+                            .disabled(true) // Firebase auth email shouldn't be edited here
                     }
                     HStack {
                         Text("Phone")
@@ -154,9 +173,21 @@ private struct EditProfileView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("Save") {
+                        if var current = profileRepo.currentProfile {
+                            current.fullName = name
+                            current.phoneNumber = phone
+                            profileRepo.saveProfile(current)
+                        }
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
                 }
+            }
+            .onAppear {
+                name = profileRepo.currentProfile?.fullName ?? ""
+                email = authVM.email // read-only display
+                phone = profileRepo.currentProfile?.phoneNumber ?? ""
             }
         }
     }

@@ -33,7 +33,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct WSHackathonAppApp: App {
 
-
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var delegate
 
@@ -42,22 +41,28 @@ struct WSHackathonAppApp: App {
     @StateObject private var wishlistRepo = WishlistRepository()
     @StateObject private var tabBarVM = WSTabBarViewModel()
     @StateObject private var authVM = AuthViewModel()
+    @StateObject private var profileRepo = ProfileRepository()
 
     var body: some Scene {
         WindowGroup {
             if authVM.isLoggedIn {
-                WSTabView()
-                    .environmentObject(registryRepo)
-                    .environmentObject(cartRepo)
-                    .environmentObject(wishlistRepo)
-                    .environmentObject(tabBarVM)
-                    .environmentObject(authVM)
+                if profileRepo.hasCompletedProfile {
+                    WSTabView()
+                        .environmentObject(registryRepo)
+                        .environmentObject(cartRepo)
+                        .environmentObject(wishlistRepo)
+                        .environmentObject(tabBarVM)
+                        .environmentObject(authVM)
+                        .environmentObject(profileRepo)
+                } else {
+                    ProfileCompletionView()
+                        .environmentObject(authVM)
+                        .environmentObject(profileRepo)
+                }
             } else {
                 AuthContainerView()
                     .environmentObject(authVM)
             }
-
-
         }
     }
 }

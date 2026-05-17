@@ -53,10 +53,23 @@ enum AppStrings {
         static let inStoreTitle = "In-Store Experience"
         static let instStoreDesc = "For easy shopping and personalized service, you'll find over 150 stores across the country."
         
+        static let finishOrder = "Finish Order"
         static let firstName = "First Name"
         static let lastName = "Last Name"
         static let event = "Event Type"
         static let eventDate = "Event Date"
         static let createYourRegistry = "Create Your Registry"
+    }
+    
+    enum Profile {
+        static let title = "Profile"
+        static let completeProfileTitle = "Complete Your Profile"
+        static let fullName = "Full Name"
+        static let phoneNumber = "Phone Number"
+        static let dateOfBirth = "Date of Birth (MM/DD/YYYY)"
+        static let gender = "Gender"
+        static let address = "Address"
+        static let saveButton = "Save Profile"
+        static let signOutButton = "Sign Out"
     }
 }

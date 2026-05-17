@@ -67,26 +67,27 @@ struct ProductCardView: View {
     // MARK: - Product Image
     @ViewBuilder
     private var productImage: some View {
-        AsyncImage(url: product.imageURL) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: .infinity, height: 160)
-                    .clipped()
-            case .failure:
-                imagePlaceholder
-            default:
-                ZStack {
-                    Color(.systemGray5)
-                    ProgressView()
+        Color.clear
+            .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160)
+            .overlay(
+                AsyncImage(url: product.imageURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        imagePlaceholder
+                    default:
+                        ZStack {
+                            Color(.systemGray5)
+                            ProgressView()
+                        }
+                    }
                 }
-            }
-        }
-        .frame(maxWidth: .infinity, minHeight: 160, maxHeight: 160)
-        .clipped()
-        .cornerRadius(16, corners: [.topLeft, .topRight])
+            )
+            .clipped()
+            .cornerRadius(16, corners: [.topLeft, .topRight])
     }
 
     private var imagePlaceholder: some View {

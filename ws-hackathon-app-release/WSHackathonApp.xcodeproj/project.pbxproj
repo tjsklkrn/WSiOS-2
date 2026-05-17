@@ -17,7 +17,7 @@
 
 /* Begin PBXFileReference section */
 		1907687F2FB8597800A0D39F /* GoogleService-Info-2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-2.plist"; sourceTree = "<group>"; };
-		75B248F32F7FAA4E00AD2FA7 /* WSHackathonApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WSHackathonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		75B248F32F7FAA4E00AD2FA7 /* WilliamSonoma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WilliamSonoma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -69,7 +69,7 @@
 		75B248F42F7FAA4E00AD2FA7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				75B248F32F7FAA4E00AD2FA7 /* WSHackathonApp.app */,
+				75B248F32F7FAA4E00AD2FA7 /* WilliamSonoma.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,7 +101,7 @@
 				190768842FB859BD00A0D39F /* GoogleSignInSwift */,
 			);
 			productName = WSHackathonApp;
-			productReference = 75B248F32F7FAA4E00AD2FA7 /* WSHackathonApp.app */;
+			productReference = 75B248F32F7FAA4E00AD2FA7 /* WilliamSonoma.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -292,7 +292,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WSHackathonApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
+				INFOPLIST_KEY_CFBundleDisplayName = WilliamSonoma;
+				INFOPLIST_KEY_CFBundleName = WilliamSonoma;
 				INFOPLIST_KEY_NSAppTransportSecurity = "{ NSAllowsArbitraryLoads = YES; }";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -310,7 +311,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.7;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ws.WSHackathonAppsss;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = WilliamSonoma;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -339,7 +340,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WSHackathonApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "WSI Hackathon";
+				INFOPLIST_KEY_CFBundleDisplayName = WilliamSonoma;
+				INFOPLIST_KEY_CFBundleName = WilliamSonoma;
 				INFOPLIST_KEY_NSAppTransportSecurity = "{ NSAllowsArbitraryLoads = YES; }";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires camera access to preview products in your space using AR.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -357,7 +359,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.7;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ws.WSHackathonAppsss;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = WilliamSonoma;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

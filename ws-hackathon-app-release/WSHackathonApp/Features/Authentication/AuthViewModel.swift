@@ -74,6 +74,18 @@ class AuthViewModel: ObservableObject {
     /// Set to trigger an alert presentation in the active view
     @Published var activeAlert: AuthAlert? = nil
 
+    // MARK: - Init
+    init() {
+        // Restore session on every app launch.
+        // Firebase persists the token internally — we just mirror it into isLoggedIn.
+        // Sign-out on unverified email is handled inside signIn() only.
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            DispatchQueue.main.async {
+                self?.isLoggedIn = user != nil
+            }
+        }
+    }
+
     // MARK: - Continue (email-first)
     func continueWithEmail() {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
