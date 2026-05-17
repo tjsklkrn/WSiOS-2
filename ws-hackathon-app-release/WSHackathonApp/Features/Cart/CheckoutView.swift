@@ -122,45 +122,32 @@ struct CheckoutView: View {
                     withAnimation { currentStep -= 1 }
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.black)
-                        .frame(width: 36, height: 36)
-                        .background(Color.white)
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color(.systemGray4), lineWidth: 0.5)
-                        )
+                        .contentShape(Rectangle())
                 }
             } else if currentStep == 1 {
                 Button(action: {
                     dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.black)
-                        .frame(width: 36, height: 36)
-                        .background(Color.white)
-                        .cornerRadius(4)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color(.systemGray4), lineWidth: 0.5)
-                        )
+                        .contentShape(Rectangle())
                 }
             } else {
-                Spacer().frame(width: 36)
+                Spacer().frame(width: 24)
             }
 
             Spacer()
 
-            Text(currentStep == 5 ? "ORDER COMPLETED" : "CHECKOUT")
-                .font(.system(size: 15, weight: .bold)) // Sans-Serif style matching screenshot
+            Text(currentStep == 5 ? "Order Completed" : "Checkout")
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.black)
-                .tracking(1.5)
 
             Spacer()
 
-            Spacer().frame(width: 36) // Balance back button
+            Spacer().frame(width: 24) // Balance back button
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -585,7 +572,12 @@ struct CheckoutView: View {
 
     private func placeOrder() {
         isLoadingCheckout = true
+        let finalTotal = cartViewModel.totalPrice + selectedDeliveryOption.price
+        let orderedItems = cartViewModel.items
         Task {
+            // Save the order to local history persistence
+            OrderHistoryManager.shared.saveOrder(items: orderedItems, total: finalTotal)
+
             await cartRepository.checkout()
             await cartViewModel.loadCart()
             isLoadingCheckout = false

@@ -42,6 +42,7 @@ struct WSHackathonAppApp: App {
     @StateObject private var wishlistRepo = WishlistRepository()
     @StateObject private var tabBarVM = WSTabBarViewModel()
     @StateObject private var authVM = AuthViewModel()
+    @StateObject private var profileRepo = ProfileRepository()
 
     var body: some Scene {
         WindowGroup {
@@ -52,6 +53,7 @@ struct WSHackathonAppApp: App {
                     .environmentObject(wishlistRepo)
                     .environmentObject(tabBarVM)
                     .environmentObject(authVM)
+                    .environmentObject(profileRepo)
             } else {
                 AuthContainerView()
                     .environmentObject(authVM)

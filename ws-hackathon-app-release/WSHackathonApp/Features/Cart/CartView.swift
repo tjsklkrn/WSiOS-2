@@ -8,7 +8,11 @@ import SwiftUI
 struct CartView: View {
     @StateObject private var viewModel = CartViewModel()
     @State private var isShowingCheckout = false
+    @State private var productToOpen: ProductItem? = nil
+
     @EnvironmentObject var cartRepository: CartRepository
+    @EnvironmentObject var wishlistRepository: WishlistRepository
+    @EnvironmentObject var registryRepository: RegistryRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
 
     var body: some View {
@@ -63,6 +67,13 @@ struct CartView: View {
         }
         .fullScreenCover(isPresented: $isShowingCheckout) {
             CheckoutView(cartViewModel: viewModel, cartRepository: cartRepository)
+                .environmentObject(tabBarVM)
+        }
+        .sheet(item: $productToOpen) { product in
+            ProductDetailView(product: product)
+                .environmentObject(wishlistRepository)
+                .environmentObject(cartRepository)
+                .environmentObject(registryRepository)
                 .environmentObject(tabBarVM)
         }
     }
@@ -150,7 +161,17 @@ struct CartView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(viewModel.recommendations) { rec in
-                                RecommendationCard(item: rec)
+                                Button(action: {
+                                    productToOpen = ProductItem(
+                                        id: rec.productId,
+                                        title: rec.name,
+                                        price: rec.price,
+                                        path: rec.imagePath
+                                    )
+                                }) {
+                                    RecommendationCard(item: rec)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(.vertical, 4)
@@ -328,62 +349,80 @@ private struct SaveForLaterRow: View {
     }
 }
 
-// MARK: - Recommendation Card
+// MARK: - Recommendation Card (Inspired directly by Home page ProductCardView)
 
 private struct RecommendationCard: View {
     let item: RecommendationItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            // Elegant scaled-to-fit container that shows the complete product shape without cropping
+        VStack(alignment: .leading, spacing: 0) {
+            // MARK: - Image Area (matching Home page scaledToFill)
             AsyncImage(url: item.imageURL) { phase in
                 switch phase {
-                case .success(let img):
-                    img.resizable().scaledToFit()
-                        .frame(width: 120, height: 100)
-                        .padding(6)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 140, height: 110)
+                        .clipped()
+
                 default:
-                    Color(.systemGray5)
-                        .frame(width: 130, height: 112)
+                    ZStack {
+                        Color(.systemGray5)
+                        Image(systemName: "photo")
+                            .foregroundColor(Color(.systemGray3))
+                            .font(.system(size: 20))
+                    }
+                    .frame(width: 140, height: 110)
                 }
             }
-            .frame(width: 140, height: 112)
-            .background(Color.white)
-            .cornerRadius(10)
-            .clipped()
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.black.opacity(0.05), lineWidth: 0.5)
-            )
+            .cornerRadius(16, corners: [.topLeft, .topRight])
 
-            VStack(alignment: .leading, spacing: 2) {
+            // MARK: - Info Area (matching Home page spacing and fonts)
+            VStack(alignment: .leading, spacing: 4) {
                 Text(item.name)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.black)
+                    .font(.system(size: 13, weight: .medium)) // Match Home page ProductCardView
+                    .foregroundColor(.primary)
                     .lineLimit(2)
-                    .frame(width: 124, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 Text(item.price.formatted(.currency(code: "USD")))
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.black)
-
-                if let context = item.context, !context.isEmpty {
-                    Text(context.capitalized)
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
+                    .font(.system(size: 14, weight: .bold)) // Match Home page ProductCardView
+                    .foregroundColor(.primary)
             }
-            .padding(.horizontal, 8)
-            .padding(.bottom, 8)
+            .padding(.horizontal, 10)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
         }
         .frame(width: 140)
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 3)
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.black.opacity(0.04), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Color(.systemGray4), lineWidth: 1)
         )
     }
 }
+
+// MARK: - Selective corner radius helper copies for Cart tab alignment
+private extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+private struct RoundedCorner: Shape {
+    var radius: CGFloat
+    var corners: UIRectCorner
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+

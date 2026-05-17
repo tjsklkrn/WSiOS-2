@@ -4,13 +4,47 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ProfileView: View {
+
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var profileRepo: ProfileRepository
+    @EnvironmentObject var authVM: AuthViewModel
 
     @State private var showEditProfile = false
     @State private var showOrderHistory = false
     @State private var showTrackOrder = false
     @State private var showSignOutAlert = false
+
+    private var displayName: String {
+        if let name = profileRepo.currentProfile?.fullName.trimmingCharacters(in: .whitespacesAndNewlines),
+           !name.isEmpty {
+            return name
+        }
+
+        if let name = Auth.auth().currentUser?.displayName?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !name.isEmpty {
+            return name
+        }
+
+        if let email = Auth.auth().currentUser?.email,
+           let username = email.split(separator: "@").first,
+           !username.isEmpty {
+            return String(username)
+        }
+
+        return "User"
+    }
+
+    private var accountDetail: String {
+        if let phone = profileRepo.currentProfile?.phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines),
+           !phone.isEmpty {
+            return phone
+        }
+
+        return Auth.auth().currentUser?.email ?? authVM.email
+    }
 
     var body: some View {
         NavigationStack {
@@ -23,9 +57,9 @@ struct ProfileView: View {
                             .font(.system(size: 52))
                             .foregroundColor(.secondary)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Guest User")
+                            Text(displayName)
                                 .font(.headline)
-                            Text("guest@example.com")
+                            Text(accountDetail)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -63,9 +97,20 @@ struct ProfileView: View {
             .listStyle(.insetGrouped)
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(Color(.tertiaryLabel))
+                    }
+                }
+            }
             // Edit Profile sheet
             .sheet(isPresented: $showEditProfile) {
                 EditProfileView()
+                    .environmentObject(profileRepo)
+                    .environmentObject(authVM)
             }
             // Order History sheet
             .sheet(isPresented: $showOrderHistory) {
@@ -77,7 +122,7 @@ struct ProfileView: View {
             }
             // Sign out confirmation
             .alert("Sign Out", isPresented: $showSignOutAlert) {
-                Button("Sign Out", role: .destructive) { /* sign out logic */ }
+                Button("Sign Out", role: .destructive) { authVM.signOut() }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Are you sure you want to sign out?")
@@ -114,8 +159,11 @@ private struct ProfileRow: View {
 
 private struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var name = "Guest User"
-    @State private var email = "guest@example.com"
+    @EnvironmentObject var profileRepo: ProfileRepository
+    @EnvironmentObject var authVM: AuthViewModel
+
+    @State private var name = ""
+    @State private var email = ""
     @State private var phone = ""
 
     var body: some View {
@@ -136,6 +184,7 @@ private struct EditProfileView: View {
                             .multilineTextAlignment(.trailing)
                             .foregroundColor(.secondary)
                             .keyboardType(.emailAddress)
+                            .disabled(true) // Firebase auth email shouldn't be edited here
                     }
                     HStack {
                         Text("Phone")
@@ -154,9 +203,28 @@ private struct EditProfileView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("Save") {
+                        var profile = profileRepo.currentProfile ?? UserProfile(
+                            fullName: "",
+                            phoneNumber: "",
+                            dateOfBirth: "",
+                            gender: "",
+                            address: ""
+                        )
+                        profile.fullName = name
+                        profile.phoneNumber = phone
+                        profileRepo.saveProfile(profile)
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
                 }
+            }
+            .onAppear {
+                name = profileRepo.currentProfile?.fullName
+                    ?? Auth.auth().currentUser?.displayName
+                    ?? ""
+                email = Auth.auth().currentUser?.email ?? authVM.email
+                phone = profileRepo.currentProfile?.phoneNumber ?? ""
             }
         }
     }
@@ -164,38 +232,130 @@ private struct EditProfileView: View {
 
 private struct OrderHistoryView: View {
     @Environment(\.dismiss) var dismiss
-    // Mocked orders
-    private let orders = [
-        ("ORD-20250410", "Apr 10, 2025", "$129.95", "Delivered"),
-        ("ORD-20250318", "Mar 18, 2025", "$249.00", "Delivered"),
-        ("ORD-20250201", "Feb 01, 2025", "$89.95",  "Delivered")
-    ]
+    @State private var orders: [OrderHistoryItem] = []
+
     var body: some View {
         NavigationStack {
-            List(orders, id: \.0) { order in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(order.0).font(.subheadline).fontWeight(.semibold)
-                        Spacer()
-                        Text(order.2).font(.subheadline).foregroundColor(.primary)
+            ZStack {
+                Color(.systemGray6).ignoresSafeArea()
+
+                if orders.isEmpty {
+                    VStack(spacing: 20) {
+                        Image(systemName: "shippingbox.fill")
+                            .font(.system(size: 64))
+                            .foregroundColor(Color(.systemGray3))
+                            .padding(.bottom, 8)
+
+                        Text("No Orders Yet")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(.black)
+
+                        Text("You haven't placed any orders yet. Go explore our catalog and find something you love!")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Text("EXPLORE CATALOG")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(Color(hex: "#C11F1F")) // Signature Red
+                                .cornerRadius(4)
+                        }
+                        .padding(.top, 8)
                     }
-                    HStack {
-                        Text(order.1).font(.caption).foregroundColor(.secondary)
-                        Spacer()
-                        Text(order.3)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.green)
+                } else {
+                    List {
+                        ForEach(orders) { order in
+                            VStack(alignment: .leading, spacing: 12) {
+                                // Order Header
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(order.id)
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundColor(.black)
+                                        Text(order.dateString)
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    
+                                    // Status Badge
+                                    Text(order.status.uppercased())
+                                        .font(.system(size: 10, weight: .bold))
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(order.status == "Delivered" ? Color.green.opacity(0.12) : Color.orange.opacity(0.12))
+                                        .foregroundColor(order.status == "Delivered" ? .green : .orange)
+                                        .cornerRadius(2)
+                                }
+                                
+                                Divider()
+
+                                // Order Items
+                                VStack(alignment: .leading, spacing: 8) {
+                                    ForEach(order.items) { item in
+                                        HStack(spacing: 10) {
+                                            // Compact image preview block
+                                            ZStack {
+                                                Color(.systemGray5)
+                                                Image(systemName: "photo")
+                                                    .font(.caption)
+                                                    .foregroundColor(Color(.systemGray3))
+                                            }
+                                            .frame(width: 36, height: 36)
+                                            .cornerRadius(4)
+
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(item.title)
+                                                    .font(.system(size: 12, weight: .medium))
+                                                    .foregroundColor(.black)
+                                                    .lineLimit(1)
+                                                Text("\(item.quantity)x • \(item.price.formatted(.currency(code: "USD")))")
+                                                    .font(.system(size: 11))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            Spacer()
+                                        }
+                                    }
+                                }
+
+                                Divider()
+
+                                // Order Total
+                                HStack {
+                                    Text("Total Price")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundColor(.black)
+                                    Spacer()
+                                    Text(order.total.formatted(.currency(code: "USD")))
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(Color(hex: "#C11F1F")) // Signature Red Total
+                                }
+                            }
+                            .padding(.vertical, 8)
+                            .listRowBackground(Color.white)
+                        }
                     }
+                    .listStyle(.insetGrouped)
                 }
-                .padding(.vertical, 4)
             }
             .navigationTitle("Order History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.black)
                 }
+            }
+            .onAppear {
+                orders = OrderHistoryManager.shared.getOrders()
             }
         }
     }

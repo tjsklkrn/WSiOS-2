@@ -59,4 +59,16 @@ enum AppStrings {
         static let eventDate = "Event Date"
         static let createYourRegistry = "Create Your Registry"
     }
+
+    enum Profile {
+        static let title = "Profile"
+        static let completeProfileTitle = "Complete Your Profile"
+        static let fullName = "Full Name"
+        static let phoneNumber = "Phone Number"
+        static let dateOfBirth = "Date of Birth (MM/DD/YYYY)"
+        static let gender = "Gender"
+        static let address = "Address"
+        static let saveButton = "Save Profile"
+        static let signOutButton = "Sign Out"
+    }
 }

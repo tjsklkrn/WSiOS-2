@@ -10,8 +10,8 @@ private struct PromoBanner: Identifiable {
     let id: Int
     let headline: String
     let subtext: String
-    let icon: String
-    let accentColor: Color
+    let imageURL: URL?
+    let targetProductId: String
 }
 
 struct HomeView: View {
@@ -22,18 +22,39 @@ struct HomeView: View {
     @EnvironmentObject var registryRepository: RegistryRepository
     @EnvironmentObject var wishlistRepository: WishlistRepository
     @EnvironmentObject var tabBarVM: WSTabBarViewModel
+    @EnvironmentObject var profileRepo: ProfileRepository
+    @EnvironmentObject var authVM: AuthViewModel
 
     @State private var selectedCategory: String = "All"
     @State private var currentBannerIndex: Int = 0
     @State private var showWishlist: Bool = false
     @State private var selectedProduct: ProductItem?
+    @State private var showProfile: Bool = false
 
     private let categories = ["All", "Cookware", "Knives", "Bakeware", "Electrics", "Tabletop"]
 
     private let banners: [PromoBanner] = [
-        PromoBanner(id: 0, headline: "Free Shipping", subtext: "On all orders over $99", icon: "shippingbox", accentColor: Color(red: 0.95, green: 0.93, blue: 0.88)),
-        PromoBanner(id: 1, headline: "New Arrivals", subtext: "Fresh picks for your kitchen", icon: "sparkles", accentColor: Color(red: 0.88, green: 0.93, blue: 0.95)),
-        PromoBanner(id: 2, headline: "Members Save 15%", subtext: "Join our loyalty program today", icon: "star.circle", accentColor: Color(red: 0.93, green: 0.90, blue: 0.96)),
+        PromoBanner(
+            id: 0,
+            headline: "Free Shipping",
+            subtext: "On orders over $99",
+            imageURL: URL(string: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2940&auto=format&fit=crop"),
+            targetProductId: "3104592"
+        ),
+        PromoBanner(
+            id: 1,
+            headline: "New Arrivals",
+            subtext: "Fresh picks for your kitchen",
+            imageURL: URL(string: "https://images.unsplash.com/photo-1581622558667-3419a8dc5f83?q=80&w=2940&auto=format&fit=crop"),
+            targetProductId: "8931142"
+        ),
+        PromoBanner(
+            id: 2,
+            headline: "Members Save",
+            subtext: "Join our loyalty program today",
+            imageURL: URL(string: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=2940&auto=format&fit=crop"),
+            targetProductId: "1940567"
+        ),
     ]
 
     var body: some View {
@@ -57,6 +78,9 @@ struct HomeView: View {
 
                             // MARK: - Category Chips
                             categoryChips
+
+                            // MARK: - Shop The Look
+                            shopTheLookSection
 
                             // MARK: - Product Grid
                             productGrid
@@ -115,7 +139,7 @@ struct HomeView: View {
                 }
 
                 // Profile icon
-                Button(action: {}) {
+                Button(action: { showProfile = true }) {
                     Circle()
                         .fill(Color(.systemGray5))
                         .frame(width: 42, height: 42)
@@ -126,9 +150,14 @@ struct HomeView: View {
                         )
                 }
             }
+            .sheet(isPresented: $showProfile) {
+                ProfileView()
+                    .environmentObject(profileRepo)
+                    .environmentObject(authVM)
+            }
 
             // Hero headline
-            Text("Discover our\ncurated collection")
+            Text("Elevate Your Home")
                 .font(.system(size: 26, weight: .bold))
                 .foregroundColor(.primary)
                 .lineSpacing(2)
@@ -161,9 +190,13 @@ struct HomeView: View {
         VStack(spacing: 10) {
             TabView(selection: $currentBannerIndex) {
                 ForEach(banners) { banner in
-                    BannerCard(banner: banner)
-                        .tag(banner.id)
-                        .padding(.horizontal, 20)
+                    BannerCard(banner: banner) {
+                        if let product = viewModel.products.first(where: { $0.id == banner.targetProductId }) {
+                            selectedProduct = product
+                        }
+                    }
+                    .tag(banner.id)
+                    .padding(.horizontal, 20)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -195,6 +228,52 @@ struct HomeView: View {
                 }
             }
             .padding(.horizontal, 20)
+        }
+    }
+
+    // MARK: - Shop The Look
+    private var shopTheLookSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("SHOP THE LOOK")
+                        .font(.system(size: 10, weight: .medium))
+                        .tracking(1.5)
+                        .foregroundColor(Color(.systemGray))
+
+                    Text("Kitchen")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundColor(.primary)
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+
+            NavigationLink(destination: ShopTheLookView()) {
+                ZStack {
+                    Image("kitchen_set")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 220)
+                        .clipped()
+
+                    Color.black.opacity(0.18)
+
+                    Text("EXPLORE KITCHEN")
+                        .font(.system(size: 12, weight: .semibold))
+                        .tracking(1.4)
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 11)
+                        .background(Color.white)
+                        .cornerRadius(20)
+                }
+                .cornerRadius(20)
+                .padding(.horizontal, 20)
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -256,51 +335,66 @@ struct HomeView: View {
 // MARK: - Banner Card
 private struct BannerCard: View {
     let banner: PromoBanner
+    let onShopNow: () -> Void
 
     var body: some View {
-        ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(banner.accentColor)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(Color(.systemGray4), lineWidth: 1)
-                )
+        ZStack(alignment: .bottomLeading) {
+            // Background Image
+            AsyncImage(url: banner.imageURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                default:
+                    Color(.systemGray5)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 140, maxHeight: 140)
+            .clipped()
+            
+            // Gradient Overlay
+            LinearGradient(
+                colors: [Color.black.opacity(0.0), Color.black.opacity(0.75)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 80)
+            .frame(maxHeight: .infinity, alignment: .bottom)
 
-            HStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 10) {
+            // Content
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(banner.headline)
-                        .font(.system(size: 19, weight: .bold))
-                        .foregroundColor(.primary)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
 
                     Text(banner.subtext)
                         .font(.system(size: 13))
-                        .foregroundColor(Color(.systemGray))
-
-                    HStack(spacing: 5) {
-                        Text("Shop now")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.primary)
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.primary)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(Color.white.opacity(0.8))
-                    .cornerRadius(20)
+                        .foregroundColor(.white.opacity(0.9))
                 }
-                .padding(.leading, 20)
-                .padding(.vertical, 20)
 
                 Spacer()
-
-                Image(systemName: banner.icon)
-                    .font(.system(size: 52))
-                    .foregroundColor(.primary.opacity(0.15))
-                    .padding(.trailing, 24)
+                
+                Button(action: onShopNow) {
+                    HStack(spacing: 5) {
+                        Text("Shop now")
+                            .font(.system(size: 13, weight: .bold))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(color: .black.opacity(0.1), radius: 3, y: 2)
+                }
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
         }
         .frame(height: 140)
+        .cornerRadius(20)
     }
 }
 
