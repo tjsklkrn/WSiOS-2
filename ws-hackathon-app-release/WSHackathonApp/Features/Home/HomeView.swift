@@ -65,6 +65,9 @@ struct HomeView: View {
                     // MARK: - Shop The Look
                     shopTheLookSection
 
+                    // MARK: - Collection Title
+                    collectionTitle
+
                     // MARK: - Product Grid
                     productGrid
                 }
@@ -245,6 +248,14 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
             }
         }
+    }
+
+    // MARK: - Product Grid
+    private var collectionTitle: some View {
+        Text("Explore the Collection")
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundColor(.primary)
+            .padding(.horizontal, 20)
     }
 
     // MARK: - Product Grid
