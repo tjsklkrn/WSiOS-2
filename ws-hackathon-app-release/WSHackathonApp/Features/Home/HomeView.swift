@@ -59,35 +59,50 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color(.systemBackground)
-                    .ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 20) {
 
-                VStack(spacing: 0) {
-                    // MARK: - Header
-                    headerView
+                    // MARK: - Search Bar
+                    searchBar
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 20) {
+                    // MARK: - Shop The Look (Explore Kitchen)
+                    shopTheLookSection
 
-                            // MARK: - Search Bar
-                            searchBar
+                    // MARK: - Promo Carousel
+                    // promoCarousel
 
-                            // MARK: - Promo Carousel
-                            promoCarousel
+                    // MARK: - Category Chips
+                    categoryChips
 
-                            // MARK: - Category Chips
-                            categoryChips
+                    // MARK: - Product Grid
+                    productGrid
+                }
+                .padding(.bottom, 100)
+            }
+            .background(Color(.systemBackground))
+            .navigationTitle("Elevate Your Home")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // Wishlist heart icon
+                    Button(action: { showWishlist = true }) {
+                        Image(systemName: wishlistRepository.count > 0 ? "heart.fill" : "heart")
+                            .font(.system(size: 20))
+                            .foregroundColor(wishlistRepository.count > 0 ? .red : .primary)
+                    }
 
-                            // MARK: - Shop The Look
-                            shopTheLookSection
-
-                            // MARK: - Product Grid
-                            productGrid
-                        }
-                        .padding(.bottom, 100)
+                    // Profile icon
+                    Button(action: { showProfile = true }) {
+                        Image(systemName: "person.crop.circle")
+                            .foregroundColor(.primary)
+                            .font(.system(size: 20))
                     }
                 }
+            }
+            .sheet(isPresented: $showProfile) {
+                ProfileView()
+                    .environmentObject(profileRepo)
+                    .environmentObject(authVM)
             }
             .onAppear {
                 Task {
@@ -124,48 +139,7 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Header
-    private var headerView: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Spacer()
 
-                // Wishlist heart icon
-                Button(action: { showWishlist = true }) {
-                    Image(systemName: wishlistRepository.count > 0 ? "heart.fill" : "heart")
-                        .font(.system(size: 22))
-                        .foregroundColor(wishlistRepository.count > 0 ? .red : .primary)
-                        .frame(width: 42, height: 42)
-                }
-
-                // Profile icon
-                Button(action: { showProfile = true }) {
-                    Circle()
-                        .fill(Color(.systemGray5))
-                        .frame(width: 42, height: 42)
-                        .overlay(
-                            Image(systemName: "person.crop.circle")
-                                .foregroundColor(.primary)
-                                .font(.system(size: 22))
-                        )
-                }
-            }
-            .sheet(isPresented: $showProfile) {
-                ProfileView()
-                    .environmentObject(profileRepo)
-                    .environmentObject(authVM)
-            }
-
-            // Hero headline
-            Text("Elevate Your Home")
-                .font(.system(size: 26, weight: .bold))
-                .foregroundColor(.primary)
-                .lineSpacing(2)
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 12)
-        .padding(.bottom, 4)
-    }
 
     // MARK: - Search Bar
     private var searchBar: some View {
@@ -241,7 +215,7 @@ struct HomeView: View {
                         .tracking(1.5)
                         .foregroundColor(Color(.systemGray))
 
-                    Text("Kitchen")
+                    Text("Kitchen & Dining")
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(.primary)
                 }
@@ -250,30 +224,56 @@ struct HomeView: View {
             }
             .padding(.horizontal, 20)
 
-            NavigationLink(destination: ShopTheLookView()) {
-                ZStack {
-                    Image("kitchen_set")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 220)
-                        .clipped()
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    NavigationLink(destination: ShopTheLookView(initialLook: .kitchen)) {
+                        ZStack {
+                            Image("kitchen_set")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 320, height: 220)
+                                .clipped()
 
-                    Color.black.opacity(0.18)
+                            Color.black.opacity(0.18)
 
-                    Text("EXPLORE KITCHEN")
-                        .font(.system(size: 12, weight: .semibold))
-                        .tracking(1.4)
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 11)
-                        .background(Color.white)
+                            Text("EXPLORE KITCHEN")
+                                .font(.system(size: 12, weight: .semibold))
+                                .tracking(1.4)
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 11)
+                                .background(Color.white)
+                                .cornerRadius(20)
+                        }
                         .cornerRadius(20)
+                    }
+                    .buttonStyle(.plain)
+
+                    NavigationLink(destination: ShopTheLookView(initialLook: .dining)) {
+                        ZStack {
+                            Image("dining_set")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 320, height: 220)
+                                .clipped()
+
+                            Color.black.opacity(0.18)
+
+                            Text("EXPLORE DINING")
+                                .font(.system(size: 12, weight: .semibold))
+                                .tracking(1.4)
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 11)
+                                .background(Color.white)
+                                .cornerRadius(20)
+                        }
+                        .cornerRadius(20)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .cornerRadius(20)
                 .padding(.horizontal, 20)
             }
-            .buttonStyle(.plain)
         }
     }
 

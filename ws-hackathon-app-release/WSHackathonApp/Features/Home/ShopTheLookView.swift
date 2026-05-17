@@ -176,44 +176,7 @@ struct ShopTheLookView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
-
-            // Premium Segment Selector
-            HStack(spacing: 0) {
-                Button(action: {
-                    withAnimation {
-                        selectedLook = .kitchen
-                    }
-                }) {
-                    VStack(spacing: 6) {
-                        Text("EXPLORE KITCHEN")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(selectedLook == .kitchen ? .black : Color(.systemGray))
-
-                        Rectangle()
-                            .fill(selectedLook == .kitchen ? Color(hex: "#C11F1F") : Color.clear)
-                            .frame(height: 2)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-
-                Button(action: {
-                    withAnimation {
-                        selectedLook = .dining
-                    }
-                }) {
-                    VStack(spacing: 6) {
-                        Text("EXPLORE DINING")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(selectedLook == .dining ? .black : Color(.systemGray))
-
-                        Rectangle()
-                            .fill(selectedLook == .dining ? Color(hex: "#C11F1F") : Color.clear)
-                            .frame(height: 2)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
         }
         .background(Color.white)
         .overlay(
