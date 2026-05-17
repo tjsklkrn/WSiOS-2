@@ -1,0 +1,14 @@
+services:
+  mock-api:
+    build:
+      context: .
+    image: ws-mock-api:latest
+    container_name: ws-mock-api
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT:-3001}
+      NODE_ENV: production
+    ports:
+      - "${PORT:-3001}:${PORT:-3001}"
+    restart: unless-stopped
