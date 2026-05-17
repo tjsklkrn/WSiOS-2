@@ -253,7 +253,7 @@ struct CartView: View {
                 .stroke(Color(.systemGray4), lineWidth: 0.7) // Crisp structural border
         )
         .padding(.horizontal, 16)
-        .padding(.bottom, 32)
+        .padding(.bottom, 16)
     }
 }
 

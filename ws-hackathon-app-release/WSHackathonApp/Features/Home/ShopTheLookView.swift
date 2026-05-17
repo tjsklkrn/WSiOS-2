@@ -46,8 +46,8 @@ struct ShopTheLookView: View {
             )
         ),
         Hotspot(
-            xOffset: 0.65,
-            yOffset: 0.52,
+            xOffset: 0.78,
+            yOffset: 0.48,
             product: ProductItem(
                 id: "2349015",
                 title: "KitchenAid Artisan Series 5-Qt. Stand Mixer, Ice Blue",
@@ -80,8 +80,8 @@ struct ShopTheLookView: View {
             )
         ),
         Hotspot(
-            xOffset: 0.86,
-            yOffset: 0.58,
+            xOffset: 0.72,
+            yOffset: 0.42,
             product: ProductItem(
                 id: "9440123",
                 title: "Riedel Vinum Cabernet/Merlot Wine Glasses, Set of 4",

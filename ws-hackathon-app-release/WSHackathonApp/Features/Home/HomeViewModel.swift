@@ -8,8 +8,11 @@
 import Foundation
 import Combine
 
+@MainActor
 class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
+    @Published var selectedBrand: String?
+    @Published var selectedCategory: String?
     @Published var products: [ProductItem] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
@@ -69,12 +72,36 @@ class HomeViewModel: ObservableObject {
         registryRepository?.currentRegistry?.items.first(where: { $0.id == product.id })?.quantity ?? 0
     }
 
+    var availableBrands: [String] {
+        let brands = products.compactMap { $0.brand }
+        return Array(Set(brands)).sorted()
+    }
+
+    var availableCategories: [String] {
+        let categories = products.compactMap { $0.productType }
+        return Array(Set(categories)).sorted()
+    }
+
     var filteredProducts: [ProductItem] {
-        if searchText.isEmpty {
-            return products
-        } else {
-            return products.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+        var result = products
+        
+        if !searchText.isEmpty {
+            result = result.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
         }
+        
+        if let brand = selectedBrand {
+            result = result.filter { $0.brand == brand }
+        }
+        
+        if let category = selectedCategory {
+            result = result.filter { $0.productType == category }
+        }
+        
+        return result
+    }
+    
+    func formatSlug(_ slug: String) -> String {
+        return slug.replacingOccurrences(of: "-", with: " ").capitalized
     }
 
     func fetchProducts() async {

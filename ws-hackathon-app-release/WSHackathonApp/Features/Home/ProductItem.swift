@@ -12,12 +12,16 @@ struct ProductItem: Identifiable {
     let title: String
     let price: Double?
     let path: String?
+    let brand: String?
+    let productType: String?
 
-    init(id: String, title: String, price: Double?, path: String?) {
+    init(id: String, title: String, price: Double?, path: String?, brand: String? = nil, productType: String? = nil) {
         self.id = id
         self.title = title
         self.price = price
         self.path = path
+        self.brand = brand
+        self.productType = productType
     }
 
     var imageURL: URL? {
@@ -42,5 +46,8 @@ extension ProductItem {
         } else {
             self.path = nil
         }
+        
+        self.brand = dto.properties?.brand
+        self.productType = dto.properties?.productType
     }
 }

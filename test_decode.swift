@@ -3,24 +3,22 @@ import Foundation
 struct ProductItemDTO: Identifiable, Codable {
     let id: String
     let name: String
-    let media: ProductMedia?
+    let properties: ProductProperties?
 }
 
-struct ProductMedia: Codable {
-    let images: [ProductImage]?
+struct ProductProperties: Codable {
+    let brand: String?
+    let productType: String?
 }
 
-struct ProductImage: Codable {
-    let type: String?
-    let path: String?
-}
-
-let url = URL(fileURLWithPath: "mock api/mock-api/responses/skus.json")
-let data = try! Data(contentsOf: url)
+let fileURL = URL(fileURLWithPath: "mock api/mock-api/responses/skus.json")
 do {
+    let data = try Data(contentsOf: fileURL)
     let dtos = try JSONDecoder().decode([ProductItemDTO].self, from: data)
-    print("SUCCESS")
-    print("FIRST ITEM IMAGE PATH: \(dtos.first?.media?.images?.first?.path ?? "nil")")
+    let brands = dtos.compactMap { $0.properties?.brand }
+    let types = dtos.compactMap { $0.properties?.productType }
+    print("Found \(brands.count) brands and \(types.count) product types.")
+    if let first = brands.first { print("First brand: \(first)") }
 } catch {
-    print("ERROR: \(error)")
+    print("Decoding error: \(error)")
 }

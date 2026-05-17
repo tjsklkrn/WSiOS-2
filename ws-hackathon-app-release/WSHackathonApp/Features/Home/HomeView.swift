@@ -25,13 +25,10 @@ struct HomeView: View {
     @EnvironmentObject var profileRepo: ProfileRepository
     @EnvironmentObject var authVM: AuthViewModel
 
-    @State private var selectedCategory: String = "All"
     @State private var currentBannerIndex: Int = 0
     @State private var showWishlist: Bool = false
     @State private var selectedProduct: ProductItem?
     @State private var showProfile: Bool = false
-
-    private let categories = ["All", "Cookware", "Knives", "Bakeware", "Electrics", "Tabletop"]
 
     private let banners: [PromoBanner] = [
         PromoBanner(
@@ -76,8 +73,8 @@ struct HomeView: View {
                             // MARK: - Promo Carousel
                             promoCarousel
 
-                            // MARK: - Category Chips
-                            categoryChips
+                            // MARK: - Filters
+                            filterSection
 
                             // MARK: - Shop The Look
                             shopTheLookSection
@@ -214,20 +211,52 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Category Chips
-    private var categoryChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(categories, id: \.self) { category in
-                    CategoryChip(
-                        title: category,
-                        isSelected: selectedCategory == category
-                    ) {
-                        selectedCategory = category
+    // MARK: - Filters
+    private var filterSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if !viewModel.availableCategories.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        CategoryChip(
+                            title: "All Categories",
+                            isSelected: viewModel.selectedCategory == nil
+                        ) {
+                            withAnimation { viewModel.selectedCategory = nil }
+                        }
+                        ForEach(viewModel.availableCategories, id: \.self) { category in
+                            CategoryChip(
+                                title: viewModel.formatSlug(category),
+                                isSelected: viewModel.selectedCategory == category
+                            ) {
+                                withAnimation { viewModel.selectedCategory = category }
+                            }
+                        }
                     }
+                    .padding(.horizontal, 20)
                 }
             }
-            .padding(.horizontal, 20)
+            
+            if !viewModel.availableBrands.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        CategoryChip(
+                            title: "All Brands",
+                            isSelected: viewModel.selectedBrand == nil
+                        ) {
+                            withAnimation { viewModel.selectedBrand = nil }
+                        }
+                        ForEach(viewModel.availableBrands, id: \.self) { brand in
+                            CategoryChip(
+                                title: viewModel.formatSlug(brand),
+                                isSelected: viewModel.selectedBrand == brand
+                            ) {
+                                withAnimation { viewModel.selectedBrand = brand }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
         }
     }
 

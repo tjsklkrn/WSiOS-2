@@ -10,7 +10,7 @@ enum AppConstants {
     
     enum API {
 
-        static let baseURL = "http://10.21.117.190:3001"
+        static let baseURL = "http://192.168.3.8:3001"
 
         static let imageBasePath = baseURL + "/images/"
         static let timeout: TimeInterval = 30
