@@ -12,132 +12,127 @@ struct WishlistView: View {
     @EnvironmentObject var cartRepository: CartRepository
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if viewModel.items.isEmpty {
-                    emptyState
-                } else {
-                    itemsList
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            if viewModel.items.isEmpty {
+                // MARK: - Empty State
+                VStack(spacing: 18) {
+                    Image(systemName: "heart")
+                        .font(.system(size: 40, weight: .ultraLight))
+                        .foregroundColor(Color(white: 0.7))
+                    Text("YOUR WISHLIST IS EMPTY")
+                        .font(.system(size: 12, weight: .medium))
+                        .tracking(1.5)
+                        .foregroundColor(.black)
+                    Text(AppStrings.Wishlist.emptyMessage)
+                        .font(.system(size: 13))
+                        .foregroundColor(Color(white: 0.5))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                }
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        // Item count header
+                        HStack {
+                            Text("\(viewModel.items.count) \(viewModel.items.count == 1 ? "ITEM" : "ITEMS")")
+                                .font(.system(size: 11, weight: .medium))
+                                .tracking(1.2)
+                                .foregroundColor(Color(white: 0.5))
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+
+                        Rectangle()
+                            .fill(Color(white: 0.88))
+                            .frame(height: 1)
+
+                        ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
+                            WSWishlistItemRow(
+                                item: item,
+                                onRemove: { viewModel.remove(item: item) },
+                                onAddToCart: {
+                                    let product = ProductItem(
+                                        id: item.id,
+                                        title: item.title,
+                                        price: item.price,
+                                        path: item.path
+                                    )
+                                    cartRepository.add(product: product)
+                                }
+                            )
+                            Rectangle()
+                                .fill(Color(white: 0.9))
+                                .frame(height: 1)
+                                .padding(.horizontal, 16)
+                        }
+                    }
                 }
             }
-            .navigationTitle(AppStrings.Wishlist.title)
-            .navigationBarTitleDisplayMode(.large)
-            .background(Color(.systemGray6).ignoresSafeArea())
         }
+        .navigationTitle(AppStrings.Wishlist.title)
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             viewModel.bind(wishlistRepository: wishlistRepository)
         }
     }
-
-    // MARK: - Empty State
-
-    private var emptyState: some View {
-        VStack(spacing: 20) {
-            Spacer()
-            Image(systemName: "heart.slash")
-                .font(.system(size: 52))
-                .foregroundColor(.secondary)
-            Text(AppStrings.Wishlist.emptyTitle)
-                .font(.headline)
-            Text(AppStrings.Wishlist.emptyMessage)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            Spacer()
-        }
-    }
-
-    // MARK: - Items List
-
-    private var itemsList: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(viewModel.items) { item in
-                    WishlistItemRow(
-                        item: item,
-                        onRemove: { viewModel.remove(item: item) },
-                        onAddToCart: {
-                            // Convert WishlistItem -> ProductItem for cart
-                            let product = ProductItem(
-                                id: item.id,
-                                title: item.title,
-                                price: item.price,
-                                path: item.path
-                            )
-                            cartRepository.add(product: product)
-                        }
-                    )
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-        }
-    }
 }
 
-// MARK: - WishlistItemRow
+// MARK: - WS Wishlist Item Row
 
-private struct WishlistItemRow: View {
+private struct WSWishlistItemRow: View {
     let item: WishlistItem
     let onRemove: () -> Void
     let onAddToCart: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Product image
+        HStack(alignment: .top, spacing: 14) {
+            // Image
             AsyncImage(url: item.imageURL) { phase in
                 if let image = phase.image {
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 80, height: 80)
-                        .clipped()
-                        .cornerRadius(8)
+                    image.resizable().scaledToFill()
                 } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray5))
-                        .frame(width: 80, height: 80)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                        )
+                    Rectangle().fill(Color(white: 0.93))
                 }
             }
+            .frame(width: 90, height: 90)
+            .clipped()
 
-            VStack(alignment: .leading, spacing: 4) {
+            // Details
+            VStack(alignment: .leading, spacing: 5) {
                 Text(item.title)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundColor(.black)
                     .lineLimit(2)
-                Text(item.price.formatted(.currency(code: "USD")))
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
 
-                HStack(spacing: 8) {
-                    Button(action: onAddToCart) {
-                        Text(AppStrings.Home.addToCartButton)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.black)
-                            .foregroundColor(.white)
-                            .cornerRadius(6)
-                    }
-                    Button(action: onRemove) {
-                        Image(systemName: "heart.fill")
-                            .foregroundColor(.red)
-                            .font(.system(size: 18))
-                    }
+                Text(item.price.formatted(.currency(code: "USD")))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.black)
+
+                Button(action: onAddToCart) {
+                    Text("ADD TO BAG")
+                        .font(.system(size: 9, weight: .medium))
+                        .tracking(1.0)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.black)
+                        .foregroundColor(.white)
                 }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
             }
 
             Spacer()
+
+            // Remove
+            Button(action: onRemove) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(Color(white: 0.5))
+            }
         }
-        .padding(12)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color(.systemGray4), radius: 2, x: 0, y: 1)
+        .padding(16)
     }
 }

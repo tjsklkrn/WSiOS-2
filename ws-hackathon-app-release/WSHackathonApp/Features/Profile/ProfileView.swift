@@ -14,70 +14,103 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
-            List {
+            ZStack {
+                Color.white.ignoresSafeArea()
 
-                // MARK: - Account Header
-                Section {
-                    HStack(spacing: 14) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 52))
-                            .foregroundColor(.secondary)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Guest User")
-                                .font(.headline)
-                            Text("guest@example.com")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+
+                        // MARK: - Account Header
+                        VStack(spacing: 0) {
+                            HStack(spacing: 16) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(white: 0.95))
+                                        .frame(width: 64, height: 64)
+                                    Image(systemName: "person")
+                                        .font(.system(size: 26, weight: .ultraLight))
+                                        .foregroundColor(Color(white: 0.4))
+                                }
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Guest User")
+                                        .font(.system(size: 18, weight: .light))
+                                        .foregroundColor(.black)
+                                    Text("guest@example.com")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(Color(white: 0.5))
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 24)
+
+                            Rectangle()
+                                .fill(Color(white: 0.88))
+                                .frame(height: 1)
                         }
-                    }
-                    .padding(.vertical, 8)
-                }
 
-                // MARK: - Actions
-                Section {
-                    ProfileRow(icon: "pencil", title: "Edit Profile") {
-                        showEditProfile = true
-                    }
-                    ProfileRow(icon: "clock.arrow.circlepath", title: "Order History") {
-                        showOrderHistory = true
-                    }
-                    ProfileRow(icon: "shippingbox", title: "Track My Order") {
-                        showTrackOrder = true
-                    }
-                }
-
-                // MARK: - Sign Out
-                Section {
-                    Button {
-                        showSignOutAlert = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "arrow.backward.square")
-                                .foregroundColor(.red)
-                            Text("Sign Out")
-                                .foregroundColor(.red)
+                        // MARK: - Menu Sections
+                        WSProfileSection(title: "ACCOUNT") {
+                            WSProfileRow(title: "Edit Profile", icon: "pencil") {
+                                showEditProfile = true
+                            }
+                            WSProfileRow(title: "Order History", icon: "clock.arrow.circlepath") {
+                                showOrderHistory = true
+                            }
+                            WSProfileRow(title: "Track My Order", icon: "shippingbox") {
+                                showTrackOrder = true
+                            }
                         }
+
+                        WSProfileSection(title: "PREFERENCES") {
+                            WSProfileRow(title: "Email Preferences", icon: "envelope") {}
+                            WSProfileRow(title: "Notifications", icon: "bell") {}
+                            WSProfileRow(title: "Address Book", icon: "map") {}
+                        }
+
+                        WSProfileSection(title: "SUPPORT") {
+                            WSProfileRow(title: "Help & FAQ", icon: "questionmark.circle") {}
+                            WSProfileRow(title: "Contact Us", icon: "message") {}
+                        }
+
+                        // MARK: - Sign Out
+                        Button {
+                            showSignOutAlert = true
+                        } label: {
+                            HStack {
+                                Text("SIGN OUT")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .tracking(1.2)
+                                    .foregroundColor(Color(red: 0.64, green: 0.07, blue: 0.07))
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 18)
+                        }
+                        .buttonStyle(.plain)
+
+                        Rectangle()
+                            .fill(Color(white: 0.88))
+                            .frame(height: 1)
+                            .padding(.horizontal, 16)
+
+                        // Brand mark at bottom
+                        Text("Williams-Sonoma")
+                            .font(.system(size: 11, weight: .light))
+                            .tracking(1.5)
+                            .foregroundColor(Color(white: 0.7))
+                            .padding(.top, 36)
+                            .padding(.bottom, 48)
                     }
                 }
             }
-            .listStyle(.insetGrouped)
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
-            // Edit Profile sheet
-            .sheet(isPresented: $showEditProfile) {
-                EditProfileView()
-            }
-            // Order History sheet
-            .sheet(isPresented: $showOrderHistory) {
-                OrderHistoryView()
-            }
-            // Track Order sheet
-            .sheet(isPresented: $showTrackOrder) {
-                TrackOrderView()
-            }
-            // Sign out confirmation
+            .sheet(isPresented: $showEditProfile) { EditProfileView() }
+            .sheet(isPresented: $showOrderHistory) { OrderHistoryView() }
+            .sheet(isPresented: $showTrackOrder) { TrackOrderView() }
             .alert("Sign Out", isPresented: $showSignOutAlert) {
-                Button("Sign Out", role: .destructive) { /* sign out logic */ }
+                Button("Sign Out", role: .destructive) {}
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Are you sure you want to sign out?")
@@ -86,31 +119,71 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - Reusable row
+// MARK: - WS Profile Section
 
-private struct ProfileRow: View {
-    let icon: String
+private struct WSProfileSection<Content: View>: View {
     let title: String
-    let action: () -> Void
+    @ViewBuilder let content: () -> Content
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .frame(width: 24)
-                    .foregroundColor(.primary)
+        VStack(spacing: 0) {
+            HStack {
                 Text(title)
-                    .foregroundColor(.primary)
+                    .font(.system(size: 10, weight: .medium))
+                    .tracking(1.5)
+                    .foregroundColor(Color(white: 0.5))
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
+            .padding(.bottom, 10)
+
+            content()
+
+            Rectangle()
+                .fill(Color(white: 0.88))
+                .frame(height: 1)
+                .padding(.horizontal, 16)
         }
     }
 }
 
-// MARK: - Sub-screens (placeholder stubs)
+// MARK: - WS Profile Row
+
+private struct WSProfileRow: View {
+    let title: String
+    let icon: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 15, weight: .light))
+                    .foregroundColor(.black)
+                    .frame(width: 22)
+                Text(title)
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(.black)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(Color(white: 0.6))
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+        }
+        .buttonStyle(.plain)
+        .background(Color.white)
+
+        Rectangle()
+            .fill(Color(white: 0.93))
+            .frame(height: 1)
+            .padding(.horizontal, 20)
+    }
+}
+
+// MARK: - Sub-screens
 
 private struct EditProfileView: View {
     @Environment(\.dismiss) var dismiss
@@ -120,31 +193,30 @@ private struct EditProfileView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Personal Information") {
-                    HStack {
-                        Text("Name")
-                        Spacer()
-                        TextField("Full Name", text: $name)
-                            .multilineTextAlignment(.trailing)
-                            .foregroundColor(.secondary)
+            ZStack {
+                Color.white.ignoresSafeArea()
+                VStack(spacing: 0) {
+                    WSFormField(label: "NAME", value: $name)
+                    Rectangle().fill(Color(white: 0.9)).frame(height: 1).padding(.horizontal, 16)
+                    WSFormField(label: "EMAIL", value: $email)
+                    Rectangle().fill(Color(white: 0.9)).frame(height: 1).padding(.horizontal, 16)
+                    WSFormField(label: "PHONE", value: $phone)
+                    Rectangle().fill(Color(white: 0.9)).frame(height: 1).padding(.horizontal, 16)
+                    Spacer()
+
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("SAVE CHANGES")
+                            .font(.system(size: 12, weight: .medium))
+                            .tracking(1.5)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 17)
+                            .background(Color.black)
+                            .foregroundColor(.white)
                     }
-                    HStack {
-                        Text("Email")
-                        Spacer()
-                        TextField("Email", text: $email)
-                            .multilineTextAlignment(.trailing)
-                            .foregroundColor(.secondary)
-                            .keyboardType(.emailAddress)
-                    }
-                    HStack {
-                        Text("Phone")
-                        Spacer()
-                        TextField("Phone Number", text: $phone)
-                            .multilineTextAlignment(.trailing)
-                            .foregroundColor(.secondary)
-                            .keyboardType(.phonePad)
-                    }
+                    .padding(16)
+                    .buttonStyle(.plain)
                 }
             }
             .navigationTitle("Edit Profile")
@@ -152,19 +224,35 @@ private struct EditProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") { dismiss() }
-                        .fontWeight(.semibold)
+                        .foregroundColor(.black)
+                        .font(.system(size: 13))
                 }
             }
         }
     }
 }
 
+private struct WSFormField: View {
+    let label: String
+    @Binding var value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .tracking(1.3)
+                .foregroundColor(Color(white: 0.5))
+            TextField("", text: $value)
+                .font(.system(size: 14))
+                .foregroundColor(.black)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+    }
+}
+
 private struct OrderHistoryView: View {
     @Environment(\.dismiss) var dismiss
-    // Mocked orders
     private let orders = [
         ("ORD-20250410", "Apr 10, 2025", "$129.95", "Delivered"),
         ("ORD-20250318", "Mar 18, 2025", "$249.00", "Delivered"),
@@ -172,29 +260,48 @@ private struct OrderHistoryView: View {
     ]
     var body: some View {
         NavigationStack {
-            List(orders, id: \.0) { order in
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(order.0).font(.subheadline).fontWeight(.semibold)
-                        Spacer()
-                        Text(order.2).font(.subheadline).foregroundColor(.primary)
+            ZStack {
+                Color.white.ignoresSafeArea()
+                VStack(spacing: 0) {
+                    ForEach(Array(orders.enumerated()), id: \.element.0) { index, order in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(order.0)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.black)
+                                Spacer()
+                                Text(order.2)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.black)
+                            }
+                            HStack {
+                                Text(order.1)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Color(white: 0.5))
+                                Spacer()
+                                Text(order.3.uppercased())
+                                    .font(.system(size: 10, weight: .medium))
+                                    .tracking(0.8)
+                                    .foregroundColor(Color(red: 0.1, green: 0.5, blue: 0.2))
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 18)
+                        Rectangle()
+                            .fill(Color(white: 0.9))
+                            .frame(height: 1)
+                            .padding(.horizontal, 16)
                     }
-                    HStack {
-                        Text(order.1).font(.caption).foregroundColor(.secondary)
-                        Spacer()
-                        Text(order.3)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.green)
-                    }
+                    Spacer()
                 }
-                .padding(.vertical, 4)
             }
             .navigationTitle("Order History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
+                        .foregroundColor(.black)
+                        .font(.system(size: 13))
                 }
             }
         }
@@ -206,43 +313,68 @@ private struct TrackOrderView: View {
     @State private var trackingNumber = ""
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "shippingbox.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(.secondary)
-                    .padding(.top, 40)
-                Text("Track Your Order")
-                    .font(.title2).fontWeight(.semibold)
-                Text("Enter your order number or tracking ID to get live updates.")
-                    .font(.subheadline).foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
+            ZStack {
+                Color.white.ignoresSafeArea()
+                VStack(spacing: 0) {
+                    Spacer()
+                    Image(systemName: "shippingbox")
+                        .font(.system(size: 48, weight: .ultraLight))
+                        .foregroundColor(Color(white: 0.7))
+                        .padding(.bottom, 20)
 
-                TextField("Order / Tracking Number", text: $trackingNumber)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                    Text("TRACK YOUR ORDER")
+                        .font(.system(size: 12, weight: .medium))
+                        .tracking(1.5)
+                        .foregroundColor(.black)
+                        .padding(.bottom, 8)
+
+                    Text("Enter your order number or tracking ID\nto get live updates.")
+                        .font(.system(size: 13))
+                        .foregroundColor(Color(white: 0.5))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 32)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("ORDER / TRACKING NUMBER")
+                            .font(.system(size: 9, weight: .medium))
+                            .tracking(1.3)
+                            .foregroundColor(Color(white: 0.5))
+                        TextField("", text: $trackingNumber)
+                            .font(.system(size: 14))
+                            .foregroundColor(.black)
+                            .padding(.vertical, 12)
+                            .overlay(
+                                Rectangle().stroke(Color(white: 0.82), lineWidth: 1)
+                                    .padding(.top, 20)
+                            )
+                    }
                     .padding(.horizontal, 24)
 
-                Button {
-                    // track action
-                } label: {
-                    Text("Track Order")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    Button {
+                        // track action
+                    } label: {
+                        Text("TRACK ORDER")
+                            .font(.system(size: 12, weight: .medium))
+                            .tracking(1.5)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 17)
+                            .background(Color.black)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 20)
+                    .buttonStyle(.plain)
+                    Spacer()
                 }
-                .padding(.horizontal, 24)
-                Spacer()
             }
             .navigationTitle("Track Order")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
+                        .foregroundColor(.black)
+                        .font(.system(size: 13))
                 }
             }
         }

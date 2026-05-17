@@ -24,6 +24,7 @@ struct WSTabView: View {
                     .badge(tab == .cart ? (viewModel.cartItemCount > 0 ? viewModel.cartItemCount : 0) : 0)
             }
         }
+        .tint(.black)
     }
 
     @ViewBuilder
@@ -31,14 +32,16 @@ struct WSTabView: View {
         switch tab {
         case .home:
             HomeView()
+                .environmentObject(cartRepository)
+                .environmentObject(registryRepository)
+                .environmentObject(wishlistRepository)
         case .registry:
             RegistryView()
+                .environmentObject(registryRepository)
+                .environmentObject(cartRepository)
         case .cart:
             CartView()
+                .environmentObject(cartRepository)
         }
     }
-}
-
-#Preview {
-    WSTabView()
 }
