@@ -22,11 +22,7 @@ struct ProductItem: Identifiable {
 
     var imageURL: URL? {
         guard let imageUrl = path else { return nil }
-        // Paths from the API start with "/" (e.g. "/img17m.jpg").
-        // imageBasePath already ends with "/", so strip the leading slash
-        // to avoid a double-slash that breaks URLSession image loading.
-        let cleanPath = imageUrl.hasPrefix("/") ? String(imageUrl.dropFirst()) : imageUrl
-        return URL(string: AppConstants.API.imageBasePath + cleanPath)
+        return URL(string: AppConstants.API.imageBasePath + imageUrl)
     }
 }
 
