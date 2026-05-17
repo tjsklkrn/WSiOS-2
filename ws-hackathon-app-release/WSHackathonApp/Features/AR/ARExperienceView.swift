@@ -29,7 +29,6 @@ struct ARExperienceView: View {
                             .foregroundColor(.white)
                             .padding(14)
                             .background(.ultraThinMaterial, in: Circle())
-                            .environment(\.colorScheme, .dark)
                     }
 
                     Spacer()
@@ -47,7 +46,6 @@ struct ARExperienceView: View {
                                 .foregroundColor(.red)
                                 .padding(14)
                                 .background(.ultraThinMaterial, in: Circle())
-                                .environment(\.colorScheme, .dark)
                         }
                     }
                 }
@@ -68,7 +66,6 @@ struct ARExperienceView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                     .background(.ultraThinMaterial, in: Capsule())
-                    .environment(\.colorScheme, .dark)
                     .padding(.bottom, 40)
                 } else if !viewModel.isModelPlaced {
                     VStack(spacing: 8) {
@@ -84,7 +81,6 @@ struct ARExperienceView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                    .environment(\.colorScheme, .dark)
                     .padding(.bottom, 40)
                 }
             }

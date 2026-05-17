@@ -65,9 +65,6 @@ struct HomeView: View {
                     // MARK: - Shop The Look
                     shopTheLookSection
 
-                    // MARK: - Filters
-                    filterSection
-
                     // MARK: - Product Grid
                     productGrid
                 }
@@ -173,55 +170,6 @@ struct HomeView: View {
                         .fill(currentBannerIndex == index ? Color.black : Color(.systemGray4))
                         .frame(width: currentBannerIndex == index ? 20 : 6, height: 6)
                         .animation(.easeInOut(duration: 0.3), value: currentBannerIndex)
-                }
-            }
-        }
-    }
-
-    // MARK: - Filters
-    private var filterSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            if !viewModel.availableCategories.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        CategoryChip(
-                            title: "All Categories",
-                            isSelected: viewModel.selectedCategory == nil
-                        ) {
-                            withAnimation { viewModel.selectedCategory = nil }
-                        }
-                        ForEach(viewModel.availableCategories, id: \.self) { category in
-                            CategoryChip(
-                                title: viewModel.formatSlug(category),
-                                isSelected: viewModel.selectedCategory == category
-                            ) {
-                                withAnimation { viewModel.selectedCategory = category }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-            }
-            
-            if !viewModel.availableBrands.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
-                        CategoryChip(
-                            title: "All Brands",
-                            isSelected: viewModel.selectedBrand == nil
-                        ) {
-                            withAnimation { viewModel.selectedBrand = nil }
-                        }
-                        ForEach(viewModel.availableBrands, id: \.self) { brand in
-                            CategoryChip(
-                                title: viewModel.formatSlug(brand),
-                                isSelected: viewModel.selectedBrand == brand
-                            ) {
-                                withAnimation { viewModel.selectedBrand = brand }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
                 }
             }
         }
@@ -417,24 +365,5 @@ private struct BannerCard: View {
         }
         .frame(height: 140)
         .cornerRadius(20)
-    }
-}
-
-// MARK: - Category Chip
-private struct CategoryChip: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
-                .foregroundColor(isSelected ? .white : .primary)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 9)
-                .background(isSelected ? Color.black : Color(.systemGray6))
-                .clipShape(Capsule())
-        }
     }
 }
