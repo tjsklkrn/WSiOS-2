@@ -94,11 +94,11 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(.tertiaryLabel))
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.primary)
                     }
                 }
             }
@@ -192,7 +192,11 @@ private struct EditProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.primary)
+                    }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
@@ -293,15 +297,7 @@ private struct OrderHistoryView: View {
                                 VStack(alignment: .leading, spacing: 8) {
                                     ForEach(order.items) { item in
                                         HStack(spacing: 10) {
-                                            // Compact image preview block
-                                            ZStack {
-                                                Color(.systemGray5)
-                                                Image(systemName: "photo")
-                                                    .font(.caption)
-                                                    .foregroundColor(Color(.systemGray3))
-                                            }
-                                            .frame(width: 36, height: 36)
-                                            .cornerRadius(4)
+                                            OrderItemImage(url: item.imageURL)
 
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(item.title)
@@ -340,15 +336,51 @@ private struct OrderHistoryView: View {
             .navigationTitle("Order History")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.black)
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.primary)
+                    }
                 }
             }
             .onAppear {
                 orders = OrderHistoryManager.shared.getOrders()
             }
+        }
+    }
+}
+
+private struct OrderItemImage: View {
+    let url: URL?
+
+    var body: some View {
+        AsyncImage(url: url) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+            case .failure:
+                placeholder
+            default:
+                ZStack {
+                    Color(.systemGray5)
+                    ProgressView()
+                        .scaleEffect(0.7)
+                }
+            }
+        }
+        .frame(width: 36, height: 36)
+        .clipShape(RoundedRectangle(cornerRadius: 4))
+    }
+
+    private var placeholder: some View {
+        ZStack {
+            Color(.systemGray5)
+            Image(systemName: "photo")
+                .font(.caption)
+                .foregroundColor(Color(.systemGray3))
         }
     }
 }

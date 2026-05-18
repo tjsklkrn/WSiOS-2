@@ -130,8 +130,8 @@ struct CheckoutView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 17, weight: .semibold))
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.black)
                         .contentShape(Rectangle())
                 }

@@ -20,6 +20,16 @@ struct OrderHistoryItem: Codable, Identifiable {
         let quantity: Int
         let price: Double
         let path: String?
+
+        var imageURL: URL? {
+            guard let path, !path.isEmpty else { return nil }
+            if let url = URL(string: path), url.scheme != nil {
+                return url
+            }
+
+            let cleanPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            return URL(string: AppConstants.API.imageBasePath + cleanPath)
+        }
     }
 }
 
